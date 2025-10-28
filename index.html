@@ -1,338 +1,493 @@
-import React, { useState, useMemo } from 'react';
-import { Coffee, TrendingUp, DollarSign, Package, PieChart, ChevronDown, ChevronUp } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart as RePieChart, Pie } from 'recharts';
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>SamBarista — Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root{
+      --bg:#f8fafc; --card:#ffffff; --muted:#6b7280; --accent:#f59e0b; --success:#10b981; --danger:#ef4444;
+      --radius:16px; --glass: rgba(255,255,255,0.6);
+    }
+    *{box-sizing:border-box;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+    body{margin:0;background:linear-gradient(135deg,#fbfdff,#f1f5f9);color:#0f172a;padding:20px;}
+    .container{max-width:1200px;margin:0 auto;}
+    header{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+    header h1{margin:0;font-size:28px;}
+    .grid{display:grid;gap:12px;}
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:12px;}
+    .card{background:var(--card);border-radius:var(--radius);padding:14px;box-shadow:0 6px 18px rgba(15,23,42,0.06);border:1px solid #e6eef6;}
+    .stat-title{font-size:12px;color:var(--glass);display:flex;align-items:center;gap:8px;}
+    .stat-value{font-weight:700;font-size:20px;margin-top:6px;}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+    textarea,input[type="text"]{width:100%;padding:10px;border-radius:10px;border:1px solid #dbeafe;outline:none;background:#fbfdff;}
+    .row{display:flex;gap:12px;align-items:center;}
+    .small{font-size:13px;color:var(--muted);}
+    .table-wrap{overflow:auto;border-radius:12px;border:1px solid #f1f5f9;margin-top:12px;}
+    table{width:100%;border-collapse:collapse;}
+    th,td{padding:12px 10px;text-align:left;border-bottom:1px solid #f1f5f9;}
+    th{background:#fbfdff;font-size:12px;color:#4b5563;}
+    td .num{font-weight:600;}
+    .btn{padding:8px 12px;border-radius:10px;border:none;background:var(--accent);color:#fff;cursor:pointer;}
+    .btn.secondary{background:#64748b;}
+    .muted{color:var(--muted);}
+    .linkbox{display:flex;gap:8px;align-items:center;}
+    .share-link{padding:8px;border-radius:8px;background:#f8fafc;border:1px dashed #e2e8f0;word-break:break-all;}
+    .flex{display:flex;gap:12px;align-items:center;}
+    .chart-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
+    @media(max-width:900px){ .chart-row{grid-template-columns:1fr;} .stats{grid-template-columns:repeat(2,1fr);} }
+    .expand{cursor:pointer;color:#9ca3af;}
+    .small-muted{font-size:12px;color:#9aa4b2;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <svg width="38" height="38" viewBox="0 0 24 24" fill="none" style="flex-shrink:0">
+        <rect x="2" y="3" width="20" height="14" rx="2" fill="#f59e0b"></rect>
+        <circle cx="8" cy="10" r="2" fill="#fff"></circle>
+        <rect x="7" y="16" width="10" height="3" rx="1.5" fill="#fde68a"></rect>
+      </svg>
+      <div>
+        <h1>SamBarista — Dashboard</h1>
+        <div class="small-muted">Управление продажами и расчёт прибыли — русская версия</div>
+      </div>
+    </header>
 
-export default function SamBaristaDashboard() {
-  const parsePrice = (str) => {
-    if (!str || str === '-') return 0;
-    return parseFloat(str.toString().replace(/[^\d]/g, '')) || 0;
-  };
-
-  const baseProducts = [
-    { name: 'Choco-Pie', qty: 5, price: 250, purchase: 130, coffee: 0, milk: 0, chocolate: 0, coconut: 0, water: 0, stick: 0, straw: 0, cup: 0, sleeve: 0, lid: 0, sugar: 0 },
-    { name: 'Choco-Pie Dark', qty: 3, price: 250, purchase: 130, coffee: 0, milk: 0, chocolate: 0, coconut: 0, water: 0, stick: 0, straw: 0, cup: 0, sleeve: 0, lid: 0, sugar: 0 },
-    { name: 'Picnic', qty: 4, price: 450, purchase: 314, coffee: 0, milk: 0, chocolate: 0, coconut: 0, water: 0, stick: 0, straw: 0, cup: 0, sleeve: 0, lid: 0, sugar: 0 },
-    { name: 'Twix', qty: 8, price: 550, purchase: 365, coffee: 0, milk: 0, chocolate: 0, coconut: 0, water: 0, stick: 0, straw: 0, cup: 0, sleeve: 0, lid: 0, sugar: 0 },
-    { name: 'Американо 250ml', qty: 1, price: 490, purchase: 0, coffee: 150, milk: 0, chocolate: 0, coconut: 0, water: 8, stick: 0, straw: 0, cup: 0, sleeve: 0, lid: 0, sugar: 0 },
-    { name: 'Горячий шоколад 250ml', qty: 14, price: 590, purchase: 0, coffee: 0, milk: 0, chocolate: 200, coconut: 0, water: 8, stick: 5, straw: 8, cup: 25, sleeve: 12, lid: 20, sugar: 30 },
-    { name: 'Горячий шоколад 350ml', qty: 25, price: 690, purchase: 0, coffee: 0, milk: 0, chocolate: 250, coconut: 0, water: 8, stick: 5, straw: 8, cup: 25, sleeve: 12, lid: 20, sugar: 30 },
-    { name: 'Какао 250ml', qty: 11, price: 590, purchase: 0, coffee: 0, milk: 120, chocolate: 100, coconut: 0, water: 8, stick: 5, straw: 8, cup: 25, sleeve: 12, lid: 20, sugar: 30 },
-    { name: 'Какао 350ml', qty: 5, price: 690, purchase: 0, coffee: 0, milk: 150, chocolate: 120, coconut: 0, water: 8, stick: 5, straw: 8, cup: 25, sleeve: 12, lid: 20, sugar: 30 },
-    { name: 'Капучино 250ml', qty: 11, price: 590, purchase: 0, coffee: 100, milk: 120, chocolate: 0, coconut: 0, water: 8, stick: 5, straw: 8, cup: 25, sleeve: 12, lid: 20, sugar: 30 },
-    { name: 'Капучино 350ml', qty: 22, price: 690, purchase: 0, coffee: 120, milk: 150, chocolate: 0, coconut: 0, water: 8, stick: 5, straw: 8, cup: 25, sleeve: 12, lid: 20, sugar: 30 },
-    { name: 'Кокосовый коктейль 250ml', qty: 2, price: 590, purchase: 0, coffee: 0, milk: 120, chocolate: 0, coconut: 100, water: 8, stick: 5, straw: 8, cup: 25, sleeve: 12, lid: 20, sugar: 30 },
-    { name: 'Кокосовый коктейль 350ml', qty: 5, price: 690, purchase: 0, coffee: 0, milk: 150, chocolate: 0, coconut: 120, water: 8, stick: 5, straw: 8, cup: 25, sleeve: 12, lid: 20, sugar: 30 },
-    { name: 'Кокосовый раф 250ml', qty: 7, price: 590, purchase: 0, coffee: 100, milk: 120, chocolate: 0, coconut: 100, water: 8, stick: 5, straw: 8, cup: 25, sleeve: 12, lid: 20, sugar: 30 },
-    { name: 'Кокосовый раф 350ml', qty: 42, price: 690, purchase: 0, coffee: 120, milk: 150, chocolate: 0, coconut: 120, water: 8, stick: 5, straw: 8, cup: 25, sleeve: 12, lid: 20, sugar: 30 },
-    { name: 'Кокосовый шоколад 250ml', qty: 5, price: 590, purchase: 0, coffee: 0, milk: 0, chocolate: 120, coconut: 100, water: 8, stick: 5, straw: 8, cup: 25, sleeve: 12, lid: 20, sugar: 30 },
-    { name: 'Кокосовый шоколад 350ml', qty: 6, price: 690, purchase: 0, coffee: 0, milk: 0, chocolate: 150, coconut: 120, water: 8, stick: 5, straw: 8, cup: 25, sleeve: 12, lid: 20, sugar: 30 },
-    { name: 'Латте 250ml', qty: 18, price: 590, purchase: 0, coffee: 120, milk: 150, chocolate: 0, coconut: 0, water: 8, stick: 5, straw: 8, cup: 25, sleeve: 12, lid: 20, sugar: 30 },
-    { name: 'Латте 350ml', qty: 6, price: 690, purchase: 0, coffee: 150, milk: 180, chocolate: 0, coconut: 0, water: 8, stick: 5, straw: 8, cup: 25, sleeve: 12, lid: 20, sugar: 30 },
-    { name: 'Моккачино 250ml', qty: 6, price: 590, purchase: 0, coffee: 100, milk: 100, chocolate: 100, coconut: 0, water: 8, stick: 5, straw: 8, cup: 25, sleeve: 12, lid: 20, sugar: 30 },
-    { name: 'Моккачино 350ml', qty: 8, price: 690, purchase: 0, coffee: 120, milk: 120, chocolate: 120, coconut: 0, water: 8, stick: 5, straw: 8, cup: 25, sleeve: 12, lid: 20, sugar: 30 },
-    { name: 'Таёжный чай 350ml', qty: 3, price: 500, purchase: 190, coffee: 0, milk: 0, chocolate: 0, coconut: 0, water: 8, stick: 5, straw: 8, cup: 25, sleeve: 12, lid: 20, sugar: 30 },
-    { name: 'Флэт Уайт 250ml', qty: 4, price: 590, purchase: 0, coffee: 100, milk: 150, chocolate: 0, coconut: 0, water: 8, stick: 5, straw: 8, cup: 25, sleeve: 12, lid: 20, sugar: 30 },
-    { name: 'Флэт Уайт 350ml', qty: 16, price: 690, purchase: 0, coffee: 120, milk: 180, chocolate: 0, coconut: 0, water: 8, stick: 5, straw: 8, cup: 25, sleeve: 12, lid: 20, sugar: 30 }
-  ];
-
-  const [products, setProducts] = useState(baseProducts);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [expandedRow, setExpandedRow] = useState(null);
-
-  const updateQuantity = (index, newQty) => {
-    const updated = [...products];
-    updated[index].qty = Math.max(0, parseInt(newQty) || 0);
-    setProducts(updated);
-  };
-
-  const calculations = useMemo(() => {
-    let totalRevenue = 0;
-    let totalCost = 0;
-    let totalAcquiring = 0;
-    let totalTax = 0;
-    let totalOFD = 0;
-    let totalProfit = 0;
-    let totalItems = 0;
-
-    let totalCoffee = 0, totalMilk = 0, totalChocolate = 0, totalCoconut = 0;
-    let totalWater = 0, totalStick = 0, totalStraw = 0, totalCup = 0;
-    let totalSleeve = 0, totalLid = 0, totalSugar = 0, totalPurchase = 0;
-
-    products.forEach(p => {
-      const revenue = p.price * p.qty;
-      const cost = (p.purchase + p.coffee + p.milk + p.chocolate + p.coconut + 
-                    p.water + p.stick + p.straw + p.cup + p.sleeve + p.lid + p.sugar) * p.qty;
-      const acquiring = revenue * 0.03;
-      const tax = revenue * 0.03;
-      const ofd = p.qty * 19.63;
-      const profit = revenue - cost - acquiring - tax - ofd;
-
-      totalRevenue += revenue;
-      totalCost += cost;
-      totalAcquiring += acquiring;
-      totalTax += tax;
-      totalOFD += ofd;
-      totalProfit += profit;
-      totalItems += p.qty;
-
-      totalCoffee += p.coffee * p.qty;
-      totalMilk += p.milk * p.qty;
-      totalChocolate += p.chocolate * p.qty;
-      totalCoconut += p.coconut * p.qty;
-      totalWater += p.water * p.qty;
-      totalStick += p.stick * p.qty;
-      totalStraw += p.straw * p.qty;
-      totalCup += p.cup * p.qty;
-      totalSleeve += p.sleeve * p.qty;
-      totalLid += p.lid * p.qty;
-      totalSugar += p.sugar * p.qty;
-      totalPurchase += p.purchase * p.qty;
-    });
-
-    const profitMargin = totalRevenue > 0 ? (totalProfit / totalRevenue * 100) : 0;
-
-    return {
-      totalRevenue, totalCost, totalAcquiring, totalTax, totalOFD, totalProfit,
-      totalItems, profitMargin,
-      totalCoffee, totalMilk, totalChocolate, totalCoconut,
-      totalWater, totalStick, totalStraw, totalCup,
-      totalSleeve, totalLid, totalSugar, totalPurchase
-    };
-  }, [products]);
-
-  const topProducts = useMemo(() => {
-    return [...products]
-      .map(p => {
-        const revenue = p.price * p.qty;
-        const cost = (p.purchase + p.coffee + p.milk + p.chocolate + p.coconut + 
-                      p.water + p.stick + p.straw + p.cup + p.sleeve + p.lid + p.sugar) * p.qty;
-        const profit = revenue - cost - (revenue * 0.06) - (p.qty * 19.63);
-        return { name: p.name.split(' ')[0], profit };
-      })
-      .sort((a, b) => b.profit - a.profit)
-      .slice(0, 5);
-  }, [products]);
-
-  const expenseBreakdown = useMemo(() => {
-    return [
-      { name: 'Кофе', value: calculations.totalCoffee },
-      { name: 'Молоко', value: calculations.totalMilk },
-      { name: 'Шоколад', value: calculations.totalChocolate },
-      { name: 'Кокос', value: calculations.totalCoconut },
-      { name: 'Упаковка', value: calculations.totalCup + calculations.totalLid + calculations.totalSleeve },
-      { name: 'Закупка', value: calculations.totalPurchase }
-    ].filter(item => item.value > 0);
-  }, [calculations]);
-
-  const filteredProducts = useMemo(() => {
-    return products.filter(p => 
-      p.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [products, searchTerm]);
-
-  const colors = ['#f59e0b', '#8b5cf6', '#3b82f6', '#10b981', '#ef4444', '#ec4899'];
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <Coffee className="w-10 h-10 text-amber-600" />
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900">SamBarista</h1>
-          </div>
-          <p className="text-gray-600 text-base md:text-lg">Полный учёт продаж и расходов</p>
-        </div>
-
-        {/* Main Stats Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 md:gap-4 mb-6">
-          <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-lg p-4 text-white">
-            <div className="flex items-center gap-2 mb-2">
-              <DollarSign className="w-5 h-5 opacity-80" />
-              <span className="text-xs font-medium opacity-90">Выручка</span>
+    <div class="grid">
+      <!-- Controls -->
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+          <div style="flex:1;min-width:280px">
+            <div style="font-weight:700">Импорт из строки</div>
+            <div class="small" style="margin-top:6px">Вставь строку в формате похожем на <code>Choco-Pie51250Picnic41800...</code><br>Формат: <b>Имя</b> <b>qty</b> <b>revenue</b> (если указано), либо только qty.</div>
+            <textarea id="inputString" placeholder="Вставь сюда строку..." rows="3" style="margin-top:8px"></textarea>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn" id="parseBtn">Загрузить из строки</button>
+              <button class="btn secondary" id="clearBtn">Сбросить количества</button>
+              <button class="btn secondary" id="loadFromHash">Загрузить из ссылки</button>
             </div>
-            <div className="text-2xl font-bold">{Math.round(calculations.totalRevenue).toLocaleString()} ₸</div>
           </div>
 
-          <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl shadow-lg p-4 text-white">
-            <div className="flex items-center gap-2 mb-2">
-              <Package className="w-5 h-5 opacity-80" />
-              <span className="text-xs font-medium opacity-90">Затраты</span>
+          <div style="width:320px">
+            <div style="font-weight:700;margin-bottom:6px">Ссылка для шаринга</div>
+            <div class="small" style="margin-bottom:6px">После обновления данных сгенерируй ссылку и поделись — она содержит твои продажи.</div>
+            <div class="linkbox">
+              <input id="shareInput" type="text" readonly class="share-link" style="flex:1"/>
+              <button class="btn" id="genLinkBtn">Сгенерировать</button>
             </div>
-            <div className="text-2xl font-bold">{Math.round(calculations.totalCost).toLocaleString()} ₸</div>
           </div>
-
-          <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-lg p-4 text-white">
-            <div className="flex items-center gap-2 mb-2">
-              <TrendingUp className="w-5 h-5 opacity-80" />
-              <span className="text-xs font-medium opacity-90">Прибыль</span>
-            </div>
-            <div className="text-2xl font-bold">{Math.round(calculations.totalProfit).toLocaleString()} ₸</div>
-          </div>
-
-          <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg p-4 text-white">
-            <div className="flex items-center gap-2 mb-2">
-              <Coffee className="w-5 h-5 opacity-80" />
-              <span className="text-xs font-medium opacity-90">Продано</span>
-            </div>
-            <div className="text-2xl font-bold">{calculations.totalItems}</div>
-            <div className="text-xs opacity-90">единиц</div>
-          </div>
-
-          <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl shadow-lg p-4 text-white">
-            <div className="flex items-center gap-2 mb-2">
-              <PieChart className="w-5 h-5 opacity-80" />
-              <span className="text-xs font-medium opacity-90">Маржа</span>
-            </div>
-            <div className="text-2xl font-bold">{calculations.profitMargin.toFixed(1)}%</div>
-          </div>
-
-          <div className="bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl shadow-lg p-4 text-white">
-            <div className="flex items-center gap-2 mb-2">
-              <DollarSign className="w-5 h-5 opacity-80" />
-              <span className="text-xs font-medium opacity-90">Налоги</span>
-            </div>
-            <div className="text-2xl font-bold">{Math.round(calculations.totalTax + calculations.totalAcquiring + calculations.totalOFD).toLocaleString()} ₸</div>
-          </div>
-        </div>
-
-        {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Топ-5 по прибыли</h3>
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={topProducts} layout="vertical">
-                <XAxis type="number" stroke="#9ca3af" />
-                <YAxis type="category" dataKey="name" stroke="#9ca3af" width={80} />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
-                  formatter={(value) => `${Math.round(value).toLocaleString()} ₸`}
-                />
-                <Bar dataKey="profit" radius={[0, 8, 8, 0]}>
-                  {topProducts.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Структура расходов</h3>
-            <ResponsiveContainer width="100%" height={250}>
-              <RePieChart>
-                <Pie
-                  data={expenseBreakdown}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {expenseBreakdown.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(value) => `${Math.round(value).toLocaleString()} ₸`} />
-              </RePieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Products Table */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
-          <div className="p-6 border-b border-gray-200">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Редактор продаж</h3>
-            <input
-              type="text"
-              placeholder="Поиск продукта..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
-            />
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Продукт</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase">Кол-во</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Цена</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Выручка</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Прибыль</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredProducts.map((product, index) => {
-                  const actualIndex = products.findIndex(p => p.name === product.name);
-                  const revenue = product.price * product.qty;
-                  const cost = (product.purchase + product.coffee + product.milk + product.chocolate + 
-                               product.coconut + product.water + product.stick + product.straw + 
-                               product.cup + product.sleeve + product.lid + product.sugar) * product.qty;
-                  const acquiring = revenue * 0.03;
-                  const tax = revenue * 0.03;
-                  const ofd = product.qty * 19.63;
-                  const profit = revenue - cost - acquiring - tax - ofd;
-                  const isExpanded = expandedRow === actualIndex;
-                  
-                  return (
-                    <React.Fragment key={actualIndex}>
-                      <tr className="hover:bg-gray-50 transition-colors">
-                        <td className="px-4 py-4 text-sm font-medium text-gray-900">{product.name}</td>
-                        <td className="px-4 py-4">
-                          <input
-                            type="number"
-                            min="0"
-                            value={product.qty}
-                            onChange={(e) => updateQuantity(actualIndex, e.target.value)}
-                            className="w-20 px-3 py-2 text-center border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                          />
-                        </td>
-                        <td className="px-4 py-4 text-right text-sm text-gray-700">{product.price} ₸</td>
-                        <td className="px-4 py-4 text-right text-sm font-semibold text-green-600">{Math.round(revenue).toLocaleString()} ₸</td>
-                        <td className="px-4 py-4 text-right text-sm font-semibold text-purple-600">{Math.round(profit).toLocaleString()} ₸</td>
-                        <td className="px-4 py-4 text-center">
-                          <button
-                            onClick={() => setExpandedRow(isExpanded ? null : actualIndex)}
-                            className="text-gray-500 hover:text-amber-600 transition-colors"
-                          >
-                            {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-                          </button>
-                        </td>
-                      </tr>
-                      {isExpanded && (
-                        <tr>
-                          <td colSpan="6" className="px-4 py-4 bg-gray-50">
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-                              <div><span className="text-gray-600">Закупка:</span> <span className="font-semibold">{(product.purchase * product.qty).toLocaleString()} ₸</span></div>
-                              <div><span className="text-gray-600">Кофе:</span> <span className="font-semibold">{(product.coffee * product.qty).toLocaleString()} ₸</span></div>
-                              <div><span className="text-gray-600">Молоко:</span> <span className="font-semibold">{(product.milk * product.qty).toLocaleString()} ₸</span></div>
-                              <div><span className="text-gray-600">Шоколад:</span> <span className="font-semibold">{(product.chocolate * product.qty).toLocaleString()} ₸</span></div>
-                              <div><span className="text-gray-600">Кокос:</span> <span className="font-semibold">{(product.coconut * product.qty).toLocaleString()} ₸</span></div>
-                              <div><span className="text-gray-600">Стакан:</span> <span className="font-semibold">{(product.cup * product.qty).toLocaleString()} ₸</span></div>
-                              <div><span className="text-gray-600">Эквайринг:</span> <span className="font-semibold text-red-600">{Math.round(acquiring).toLocaleString()} ₸</span></div>
-                              <div><span className="text-gray-600">Налог:</span> <span className="font-semibold text-red-600">{Math.round(tax).toLocaleString()} ₸</span></div>
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                    </React.Fragment>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div className="text-center text-gray-500 text-sm mt-6">
-          Обновлено: {new Date().toLocaleDateString('ru-RU', { 
-            day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
-          })}
         </div>
       </div>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="card">
+          <div class="stat-title">Выручка</div>
+          <div class="stat-value" id="totalRevenue">0 ₸</div>
+        </div>
+        <div class="card">
+          <div class="stat-title">Затраты</div>
+          <div class="stat-value" id="totalCost">0 ₸</div>
+        </div>
+        <div class="card">
+          <div class="stat-title">Прибыль</div>
+          <div class="stat-value" id="totalProfit">0 ₸</div>
+        </div>
+        <div class="card">
+          <div class="stat-title">Продано (шт.)</div>
+          <div class="stat-value" id="totalItems">0</div>
+          <div class="small-muted">единиц</div>
+        </div>
+        <div class="card">
+          <div class="stat-title">Маржа</div>
+          <div class="stat-value" id="profitMargin">0%</div>
+        </div>
+        <div class="card">
+          <div class="stat-title">Налоги + эквайринг + ОФД</div>
+          <div class="stat-value" id="totalTaxes">0 ₸</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="chart-row">
+        <div class="card">
+          <div style="font-weight:700;margin-bottom:8px">Топ-5 по прибыли</div>
+          <canvas id="barChart" height="220"></canvas>
+        </div>
+        <div class="card">
+          <div style="font-weight:700;margin-bottom:8px">Структура расходов</div>
+          <canvas id="pieChart" height="220"></canvas>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="card table-wrap">
+        <table id="productsTable">
+          <thead>
+            <tr>
+              <th>Продукт</th>
+              <th style="width:120px;text-align:center">Кол-во</th>
+              <th style="width:110px;text-align:right">Цена</th>
+              <th style="width:120px;text-align:right">Выручка</th>
+              <th style="width:120px;text-align:right">Прибыль</th>
+              <th style="width:60px;text-align:center"></th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <!-- rows injected -->
+          </tbody>
+        </table>
+      </div>
+
+      <div style="text-align:center;color:#94a3b8;font-size:13px;margin-top:8px">
+        Обновлено: <span id="updatedAt">—</span>
+      </div>
     </div>
-  );
+  </div>
+
+<script>
+/*
+  Полный одностраничный дэшборд. Парсит "Имя qty revenue" последовательности.
+  - Если после имени идут два числа — первое qty, второе revenue.
+  - Если одно число — это qty.
+  - При шаринге помещаем "template string" в URL hash: #data=<encoded>
+*/
+
+const OFD_PER_ITEM = 19.63;
+const ACQUIRING_RATE = 0.03;
+const TAX_RATE = 0.03;
+
+// База продуктов (qty по умолчанию = 0)
+const baseProducts = [
+  { name: 'Choco-Pie', qty: 0, price: 250, purchase: 130, coffee:0, milk:0, chocolate:0, coconut:0, water:0, stick:0, straw:0, cup:0, sleeve:0, lid:0, sugar:0 },
+  { name: 'Choco-Pie Dark', qty: 0, price: 250, purchase: 130, coffee:0, milk:0, chocolate:0, coconut:0, water:0, stick:0, straw:0, cup:0, sleeve:0, lid:0, sugar:0 },
+  { name: 'Picnic', qty: 0, price: 450, purchase: 314, coffee:0, milk:0, chocolate:0, coconut:0, water:0, stick:0, straw:0, cup:0, sleeve:0, lid:0, sugar:0 },
+  { name: 'Twix', qty: 0, price: 550, purchase: 365, coffee:0, milk:0, chocolate:0, coconut:0, water:0, stick:0, straw:0, cup:0, sleeve:0, lid:0, sugar:0 },
+  { name: 'Американо 250ml', qty: 0, price: 490, purchase: 0, coffee:150, milk:0, chocolate:0, coconut:0, water:8, stick:0, straw:0, cup:0, sleeve:0, lid:0, sugar:0 },
+  { name: 'Горячий шоколад 250ml', qty: 0, price: 590, purchase: 0, coffee:0, milk:0, chocolate:200, coconut:0, water:8, stick:5, straw:8, cup:25, sleeve:12, lid:20, sugar:30 },
+  { name: 'Горячий шоколад 350ml', qty: 0, price: 690, purchase: 0, coffee:0, milk:0, chocolate:250, coconut:0, water:8, stick:5, straw:8, cup:25, sleeve:12, lid:20, sugar:30 },
+  { name: 'Какао 250ml', qty: 0, price: 590, purchase: 0, coffee:0, milk:120, chocolate:100, coconut:0, water:8, stick:5, straw:8, cup:25, sleeve:12, lid:20, sugar:30 },
+  { name: 'Какао 350ml', qty: 0, price: 690, purchase: 0, coffee:0, milk:150, chocolate:120, coconut:0, water:8, stick:5, straw:8, cup:25, sleeve:12, lid:20, sugar:30 },
+  { name: 'Капучино 250ml', qty: 0, price: 590, purchase: 0, coffee:100, milk:120, chocolate:0, coconut:0, water:8, stick:5, straw:8, cup:25, sleeve:12, lid:20, sugar:30 },
+  { name: 'Капучино 350ml', qty: 0, price: 690, purchase: 0, coffee:120, milk:150, chocolate:0, coconut:0, water:8, stick:5, straw:8, cup:25, sleeve:12, lid:20, sugar:30 },
+  { name: 'Кокосовый коктейль 250ml', qty: 0, price: 590, purchase: 0, coffee:0, milk:120, chocolate:0, coconut:100, water:8, stick:5, straw:8, cup:25, sleeve:12, lid:20, sugar:30 },
+  { name: 'Кокосовый коктейль 350ml', qty: 0, price: 690, purchase: 0, coffee:0, milk:150, chocolate:0, coconut:120, water:8, stick:5, straw:8, cup:25, sleeve:12, lid:20, sugar:30 },
+  { name: 'Кокосовый раф 250ml', qty: 0, price: 590, purchase: 0, coffee:100, milk:120, chocolate:0, coconut:100, water:8, stick:5, straw:8, cup:25, sleeve:12, lid:20, sugar:30 },
+  { name: 'Кокосовый раф 350ml', qty: 0, price: 690, purchase: 0, coffee:120, milk:150, chocolate:0, coconut:120, water:8, stick:5, straw:8, cup:25, sleeve:12, lid:20, sugar:30 },
+  { name: 'Кокосовый шоколад 250ml', qty: 0, price: 590, purchase: 0, coffee:0, milk:0, chocolate:120, coconut:100, water:8, stick:5, straw:8, cup:25, sleeve:12, lid:20, sugar:30 },
+  { name: 'Кокосовый шоколад 350ml', qty: 0, price: 690, purchase: 0, coffee:0, milk:0, chocolate:150, coconut:120, water:8, stick:5, straw:8, cup:25, sleeve:12, lid:20, sugar:30 },
+  { name: 'Латте 250ml', qty: 0, price: 590, purchase: 0, coffee:120, milk:150, chocolate:0, coconut:0, water:8, stick:5, straw:8, cup:25, sleeve:12, lid:20, sugar:30 },
+  { name: 'Латте 350ml', qty: 0, price: 690, purchase: 0, coffee:150, milk:180, chocolate:0, coconut:0, water:8, stick:5, straw:8, cup:25, sleeve:12, lid:20, sugar:30 },
+  { name: 'Моккачино 250ml', qty: 0, price: 590, purchase: 0, coffee:100, milk:100, chocolate:100, coconut:0, water:8, stick:5, straw:8, cup:25, sleeve:12, lid:20, sugar:30 },
+  { name: 'Моккачино 350ml', qty: 0, price: 690, purchase: 0, coffee:120, milk:120, chocolate:120, coconut:0, water:8, stick:5, straw:8, cup:25, sleeve:12, lid:20, sugar:30 },
+  { name: 'Таёжный чай 350ml', qty: 0, price: 500, purchase: 190, coffee:0, milk:0, chocolate:0, coconut:0, water:8, stick:5, straw:8, cup:25, sleeve:12, lid:20, sugar:30 },
+  { name: 'Флэт Уайт 250ml', qty: 0, price: 590, purchase: 0, coffee:100, milk:150, chocolate:0, coconut:0, water:8, stick:5, straw:8, cup:25, sleeve:12, lid:20, sugar:30 },
+  { name: 'Флэт Уайт 350ml', qty: 0, price: 690, purchase: 0, coffee:120, milk:180, chocolate:0, coconut:0, water:8, stick:5, straw:8, cup:25, sleeve:12, lid:20, sugar:30 }
+];
+
+let products = JSON.parse(JSON.stringify(baseProducts)); // рабочая копия
+
+// --- UI refs
+const tableBody = document.getElementById('tableBody');
+const totalRevenueEl = document.getElementById('totalRevenue');
+const totalCostEl = document.getElementById('totalCost');
+const totalProfitEl = document.getElementById('totalProfit');
+const totalItemsEl = document.getElementById('totalItems');
+const profitMarginEl = document.getElementById('profitMargin');
+const totalTaxesEl = document.getElementById('totalTaxes');
+const updatedAtEl = document.getElementById('updatedAt');
+
+const inputStringEl = document.getElementById('inputString');
+const parseBtn = document.getElementById('parseBtn');
+const clearBtn = document.getElementById('clearBtn');
+const genLinkBtn = document.getElementById('genLinkBtn');
+const shareInput = document.getElementById('shareInput');
+const loadFromHashBtn = document.getElementById('loadFromHash');
+
+// Charts
+let barChart = null;
+let pieChart = null;
+
+function money(n){ return n>=0 ? Math.round(n).toLocaleString('ru-RU') + ' ₸' : '-' + Math.round(Math.abs(n)).toLocaleString('ru-RU') + ' ₸'; }
+function num(n){ return Math.round(n).toLocaleString('ru-RU'); }
+
+function calcAll(){
+  let totalRevenue = 0, totalCost = 0, totalProfit = 0, totalItems=0;
+  let totalCoffee=0, totalMilk=0, totalChocolate=0, totalCoconut=0, totalCup=0, totalPurchase=0;
+  let totalAcquiring = 0, totalTax = 0, totalOFD = 0;
+
+  const rows = [];
+
+  products.forEach(p=>{
+    const qty = Number(p.qty) || 0;
+    const price = Number(p.price) || 0;
+    const revenue = (p._revenue !== undefined) ? Number(p._revenue) : (price * qty);
+    const unitCost = Number(p.purchase || 0) + Number(p.coffee||0) + Number(p.milk||0) + Number(p.chocolate||0) + Number(p.coconut||0) + Number(p.water||0) + Number(p.stick||0) + Number(p.straw||0) + Number(p.cup||0) + Number(p.sleeve||0) + Number(p.lid||0) + Number(p.sugar||0);
+    const cost = unitCost * qty;
+    const acquiring = revenue * ACQUIRING_RATE;
+    const tax = revenue * TAX_RATE;
+    const ofd = qty * OFD_PER_ITEM;
+    const profit = revenue - cost - acquiring - tax - ofd;
+
+    totalRevenue += revenue;
+    totalCost += cost;
+    totalProfit += profit;
+    totalItems += qty;
+
+    totalCoffee += (p.coffee||0) * qty;
+    totalMilk += (p.milk||0) * qty;
+    totalChocolate += (p.chocolate||0) * qty;
+    totalCoconut += (p.coconut||0) * qty;
+    totalCup += (p.cup||0 + p.lid||0 + p.sleeve||0) * qty;
+    totalPurchase += (p.purchase||0) * qty;
+
+    totalAcquiring += acquiring;
+    totalTax += tax;
+    totalOFD += ofd;
+
+    rows.push({
+      name: p.name,
+      qty, price: price,
+      revenue, cost, profit
+    });
+  });
+
+  const taxTotal = Math.round(totalAcquiring + totalTax + totalOFD);
+
+  // write totals
+  totalRevenueEl.textContent = money(totalRevenue);
+  totalCostEl.textContent = money(totalCost);
+  totalProfitEl.textContent = money(totalProfit);
+  totalItemsEl.textContent = num(totalItems);
+  profitMarginEl.textContent = totalRevenue>0 ? ((totalProfit/totalRevenue*100).toFixed(1) + '%') : '0%';
+  totalTaxesEl.textContent = money(taxTotal);
+  updatedAtEl.textContent = (new Date()).toLocaleString('ru-RU', {day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+
+  drawTable(rows);
+  drawCharts(rows, { coffee: totalCoffee, milk: totalMilk, chocolate: totalChocolate, coconut: totalCoconut, packaging: totalCup, purchase: totalPurchase });
 }
+
+function drawTable(rows){
+  tableBody.innerHTML = '';
+  rows.forEach((r, i)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${r.name}</td>
+      <td style="text-align:center"><input data-i="${i}" class="qty-input" type="number" min="0" value="${r.qty}" style="width:80px;padding:6px;border-radius:8px;border:1px solid #e6eef6;text-align:center"/></td>
+      <td style="text-align:right">${num(r.price)} ₸</td>
+      <td style="text-align:right;font-weight:600;color:${r.revenue>=0?'#059669':'#ef4444'}">${num(r.revenue)} ₸</td>
+      <td style="text-align:right;font-weight:600;color:${r.profit>=0?'#6b21a8':'#ef4444'}">${Math.round(r.profit).toLocaleString()} ₸</td>
+      <td style="text-align:center"><button class="expand" data-i="${i}">▶</button></td>
+    `;
+    tableBody.appendChild(tr);
+
+    // expanded row placeholder
+    const tr2 = document.createElement('tr');
+    tr2.className = 'detail-row';
+    tr2.style.display = 'none';
+    tr2.innerHTML = `<td colspan="6" style="background:#fbfdff;padding:12px">
+      <div style="display:flex;gap:12px;flex-wrap:wrap;color:#374151">
+        <div>Выручка: <b>${num(r.revenue)} ₸</b></div>
+        <div>Цена ед.: <b>${num(r.price)} ₸</b></div>
+        <div>Кол-во: <b>${num(r.qty)}</b></div>
+        <div>Прибыль: <b>${Math.round(r.profit).toLocaleString()} ₸</b></div>
+      </div>
+    </td>`;
+    tableBody.appendChild(tr2);
+  });
+
+  // attach listeners
+  document.querySelectorAll('.qty-input').forEach(inp=>{
+    inp.addEventListener('change', (e)=>{
+      const idx = Number(inp.dataset.i);
+      const val = Math.max(0, parseInt(e.target.value) || 0);
+      // ensure mapping to products by name
+      const pname = products[idx].name;
+      products[idx].qty = val;
+      // if _revenue was set (from parsing), recompute price if qty>0 else keep
+      if (products[idx]._revenue !== undefined){
+        if (val>0) products[idx].price = Math.round(products[idx]._revenue / val);
+      }
+      calcAll();
+    });
+  });
+
+  document.querySelectorAll('.expand').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      const idx = Number(btn.dataset.i);
+      const detailRow = tableBody.children[idx*2 + 1];
+      detailRow.style.display = detailRow.style.display === 'none' ? 'table-row' : 'none';
+      btn.textContent = detailRow.style.display === 'none' ? '▶' : '▼';
+    });
+  });
+}
+
+function drawCharts(rows, expenseTotals){
+  // Top5 profits
+  const sorted = rows.slice().map(r=>({name:r.name, profit:r.profit})).sort((a,b)=>b.profit-a.profit).slice(0,5);
+  const labels = sorted.map(s=>s.name);
+  const data = sorted.map(s=>Math.round(s.profit));
+
+  const barCtx = document.getElementById('barChart').getContext('2d');
+  if (barChart) barChart.destroy();
+  barChart = new Chart(barCtx, {
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'Прибыль', data, backgroundColor: ['#f59e0b','#8b5cf6','#3b82f6','#10b981','#ef4444'] }]},
+    options: { plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}} }
+  });
+
+  // Expense pie
+  const pieCtx = document.getElementById('pieChart').getContext('2d');
+  const pieLabels = [];
+  const pieData = [];
+  const pieColors = [];
+  if (expenseTotals.coffee>0){ pieLabels.push('Кофе'); pieData.push(Math.round(expenseTotals.coffee)); pieColors.push('#8b5cf6'); }
+  if (expenseTotals.milk>0){ pieLabels.push('Молоко'); pieData.push(Math.round(expenseTotals.milk)); pieColors.push('#3b82f6'); }
+  if (expenseTotals.chocolate>0){ pieLabels.push('Шоколад'); pieData.push(Math.round(expenseTotals.chocolate)); pieColors.push('#f59e0b'); }
+  if (expenseTotals.coconut>0){ pieLabels.push('Кокос'); pieData.push(Math.round(expenseTotals.coconut)); pieColors.push('#10b981'); }
+  if (expenseTotals.packaging>0){ pieLabels.push('Упаковка'); pieData.push(Math.round(expenseTotals.packaging)); pieColors.push('#ef4444'); }
+  if (expenseTotals.purchase>0){ pieLabels.push('Закупка'); pieData.push(Math.round(expenseTotals.purchase)); pieColors.push('#64748b'); }
+
+  if (pieChart) pieChart.destroy();
+  pieChart = new Chart(pieCtx, {
+    type: 'pie',
+    data: { labels: pieLabels, datasets: [{ data: pieData, backgroundColor: pieColors }] },
+    options: { plugins:{legend:{position:'bottom'}} }
+  });
+}
+
+// --- Parsing user string
+function parseTemplateString(str){
+  // We'll try to find for each product: name followed by one or two numbers.
+  // Use global approach: for each product name, build regex: name\s*(\d+)(\d+)?  BUT we need to distinguish between two numbers.
+  // Better approach: after name, capture up to two number groups: (\d+)(?!\d)
+  const s = str.replace(/\s+/g,' ');
+  // For stability, we'll find occurrences in original order
+  const lower = s; // keep original case (we'll use case-insensitive)
+  const updated = JSON.parse(JSON.stringify(baseProducts)); // start from base
+  let foundAny = false;
+
+  baseProducts.forEach((p, idx)=>{
+    // create regex to find name and then up to two numbers after it (allowing optional spaces)
+    const escapedName = p.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // pattern: name\s*?(\d+)(?:\s*?(\d+))?
+    const regex = new RegExp(escapedName + '\\s*(\\d+)(?:\\s*(\\d+))?', 'i');
+    const match = lower.match(regex);
+    if (match){
+      foundAny = true;
+      const qty = parseInt(match[1],10) || 0;
+      updated[idx].qty = qty;
+      if (match[2]){
+        // second number — treat as total revenue
+        const revenue = parseFloat(match[2]) || 0;
+        updated[idx]._revenue = revenue;
+        if (qty>0) updated[idx].price = Math.round(revenue/qty);
+      } else {
+        // no revenue — keep price from base
+        delete updated[idx]._revenue;
+      }
+    }
+  });
+
+  // If not matched by strict names, try looser matching: maybe names in the string don't include ml or parentheses.
+  // We'll also attempt to extract patterns of "NameDigitsDigits" where name may be substring.
+  if (!foundAny){
+    // find sequences like (letters and symbols)+digits+digits and try to match product by prefix
+    const tokens = s.split(/(?=[A-Za-zА-Яа-я0-9\-])/g);
+    baseProducts.forEach((p, idx)=>{
+      const esc = p.name.replace(/[^\w]/g,'').toLowerCase();
+      const re2 = new RegExp(p.name.split(' ')[0].replace(/[^\w]/g,'').toLowerCase());
+      // fallback not implemented deeply to avoid false positives
+    });
+  }
+
+  // Merge updated into products (preserve other cost fields)
+  products = products.map((orig, i) => {
+    const u = updated[i];
+    const merged = Object.assign({}, orig, { qty: u.qty, price: u.price });
+    if (u._revenue !== undefined) merged._revenue = u._revenue;
+    else delete merged._revenue;
+    return merged;
+  });
+
+  calcAll();
+}
+
+// --- Share link handling (we'll store as encoded template string)
+function generateShareLink(){
+  // We'll build a compact template string from current products:
+  // pattern: Name<qty><revenue?> (if revenue exists). Join without separators like user originally did.
+  let parts = [];
+  products.forEach(p=>{
+    const qty = Number(p.qty) || 0;
+    if (qty>0){
+      if (p._revenue !== undefined) parts.push(p.name + qty + Math.round(p._revenue));
+      else parts.push(p.name + qty);
+    }
+  });
+  const tmpl = parts.join('');
+  const encoded = encodeURIComponent(tmpl);
+  const url = location.origin + location.pathname + '#data=' + encoded;
+  shareInput.value = url;
+  // also update location.hash (optional)
+  history.replaceState(null, '', '#data=' + encoded);
+  return url;
+}
+
+function loadFromHash(){
+  const h = location.hash || '';
+  if (!h) return;
+  const m = h.match(/data=(.+)/);
+  if (m){
+    const decoded = decodeURIComponent(m[1]);
+    inputStringEl.value = decoded;
+    parseTemplateString(decoded);
+  }
+}
+
+// Buttons
+parseBtn.addEventListener('click', ()=>{
+  const txt = inputStringEl.value || '';
+  if (!txt.trim()){
+    alert('Вставь текст для импорта.');
+    return;
+  }
+  parseTemplateString(txt);
+  inputStringEl.value = '';
+});
+
+clearBtn.addEventListener('click', ()=>{
+  if (!confirm('Установить все количества в 0?')) return;
+  products = JSON.parse(JSON.stringify(baseProducts));
+  calcAll();
+  shareInput.value = '';
+  history.replaceState(null, '', location.pathname);
+});
+
+genLinkBtn.addEventListener('click', ()=>{
+  const url = generateShareLink();
+  shareInput.select();
+  document.execCommand('copy');
+  alert('Ссылка сгенерирована и скопирована в буфер:\n' + url);
+});
+
+loadFromHashBtn.addEventListener('click', ()=>{
+  loadFromHash();
+  alert('Если в ссылке были данные, они загружены.');
+});
+
+// On load: render base table and check hash
+function init(){
+  // copy baseProducts to products
+  products = JSON.parse(JSON.stringify(baseProducts));
+  calcAll();
+  // if hash contains data, load it
+  loadFromHash();
+}
+
+init();
+</script>
+</body>
+</html>
