@@ -859,4 +859,222 @@ Twix	8	4400
                     
                     // Налоги: эквайринг (3%) + налог (3%) + ОФД
                     const acquiring = Math.round(amount * 0.03);
-                    const tax =
+                    const tax = Math.round(amount * 0.03);
+                    const ofd = Math.round(quantity * 19.6);
+                    const taxes = acquiring + tax + ofd;
+                    
+                    taxesBreakdown['Эквайринг (3%)'] += acquiring;
+                    taxesBreakdown['Налог (3%)'] += tax;
+                    taxesBreakdown['ОФД + лицензия'] += ofd;
+                    
+                    // Чистая прибыль = Сумма продаж - Затраты на ингредиенты - Налоги
+                    const profit = amount - ingredientsCost - taxes;
+                    
+                    products.push({
+                        name,
+                        quantity,
+                        price,
+                        amount,
+                        cost: productData.cost,
+                        ingredientsCost,
+                        profit,
+                        ingredients: productData.ingredients,
+                        purchase: productData.purchase
+                    });
+                    
+                    totalSales += quantity;
+                    totalAmount += amount;
+                    totalCosts += ingredientsCost;
+                    totalTaxes += taxes;
+                    totalProfit += profit;
+                }
+                
+                const avgPrice = totalSales > 0 ? Math.round(totalAmount / totalSales) : 0;
+                
+                // Удаляем нулевые значения из детализации
+                Object.keys(costsBreakdown).forEach(key => {
+                    if (costsBreakdown[key] === 0) delete costsBreakdown[key];
+                });
+                
+                displayMetrics(totalSales, totalAmount, avgPrice, totalCosts, totalTaxes, totalProfit, costsBreakdown, taxesBreakdown);
+                displayProducts(products);
+                
+            } catch (error) {
+                document.getElementById('period').textContent = 'Ошибка загрузки данных: ' + error.message;
+                document.getElementById('metrics').innerHTML = '<div class="loading">Ошибка: ' + error.message + '</div>';
+                document.getElementById('products-list').innerHTML = '<div class="loading">Проверьте консоль браузера (F12) для подробностей</div>';
+            }
+        }
+
+        function displayMetrics(totalSales, totalAmount, avgPrice, totalCosts, totalTaxes, totalProfit, costsBreakdown, taxesBreakdown) {
+            const metrics = document.getElementById('metrics');
+            
+            // Формируем tooltip для затрат
+            let costsTooltip = '<div class="metric-tooltip">';
+            for (const [key, value] of Object.entries(costsBreakdown)) {
+                costsTooltip += `
+                    <div class="tooltip-item">
+                        <span class="tooltip-label">${key}</span>
+                        <span class="tooltip-value">${value.toLocaleString()} ₸</span>
+                    </div>
+                `;
+            }
+            costsTooltip += '</div>';
+            
+            // Формируем tooltip для налогов
+            let taxesTooltip = '<div class="metric-tooltip">';
+            for (const [key, value] of Object.entries(taxesBreakdown)) {
+                taxesTooltip += `
+                    <div class="tooltip-item">
+                        <span class="tooltip-label">${key}</span>
+                        <span class="tooltip-value">${value.toLocaleString()} ₸</span>
+                    </div>
+                `;
+            }
+            taxesTooltip += '</div>';
+            
+            metrics.innerHTML = `
+                <div class="metric-card">
+                    <div class="metric-label">Общее число продаж</div>
+                    <div class="metric-value">${totalSales}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Общая сумма продаж</div>
+                    <div class="metric-value">${totalAmount.toLocaleString()} ₸</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Средняя цена продажи</div>
+                    <div class="metric-value">${avgPrice.toLocaleString()} ₸</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Затраты (без учёта налогов)</div>
+                    <div class="metric-value">${totalCosts.toLocaleString()} ₸</div>
+                    ${costsTooltip}
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Налоги</div>
+                    <div class="metric-value">${totalTaxes.toLocaleString()} ₸</div>
+                    ${taxesTooltip}
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Чистая прибыль</div>
+                    <div class="metric-value">${totalProfit.toLocaleString()} ₸</div>
+                </div>
+            `;
+        }
+
+        function displayProducts(products) {
+            const container = document.getElementById('products-list');
+            container.innerHTML = products.map(p => {
+                // Убираем "(SamBarista)" из названия для отображения
+                const displayName = p.name.replace(' (SamBarista)', '');
+                
+                return `
+                <div class="product-card">
+                    <img src="${p.name}.png" alt="${displayName}" class="product-image" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2216%22 fill=%22%23999%22%3EНет фото%3C/text%3E%3C/svg%3E'">
+                    <div class="product-info">
+                        <div class="product-name">${displayName}</div>
+                        <div class="info-item">
+                            <div class="info-label">Кол-во продаж</div>
+                            <div class="info-value">${p.quantity}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Цена розничная</div>
+                            <div class="info-value">${p.price.toLocaleString()} ₸</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Сумма продаж</div>
+                            <div class="info-value">${p.amount.toLocaleString()} ₸</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Себестоимость</div>
+                            <div class="info-value">${p.cost.toLocaleString()} ₸</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Чистая прибыль</div>
+                            <div class="info-value">${p.profit.toLocaleString()} ₸</div>
+                        </div>
+                    </div>
+                    <button class="info-button" onclick='showDetails(${JSON.stringify(p)})'>i</button>
+                </div>
+            `}).join('');
+        }
+
+        function showDetails(product) {
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const body = document.getElementById('modal-body');
+            
+            // Убираем "(SamBarista)" из названия
+            const displayName = product.name.replace(' (SamBarista)', '');
+            title.textContent = `Детализация себестоимости: ${displayName}`;
+            
+            let html = '<div style="margin-bottom: 15px; padding: 15px; background: #FAFAFA; border-radius: 10px; border-left: 4px solid #4A90E2;">';
+            html += '<div style="font-size: 14px; color: #4A90E2; margin-bottom: 8px;">📊 Общая информация</div>';
+            html += `<div style="color: #333;"><strong>Количество продаж:</strong> ${product.quantity} шт.</div>`;
+            html += `<div style="color: #333;"><strong>Себестоимость единицы:</strong> ${product.cost.toLocaleString()} ₸</div>`;
+            html += '</div>';
+            
+            html += '<div style="margin-bottom: 10px; font-size: 16px; font-weight: 600; color: #357ABD;">☕ Детализация затрат (общая за все продажи):</div>';
+            
+            let totalIngredientsCost = 0;
+            
+            // Показываем ингредиенты
+            for (const ingredient in product.ingredients) {
+                const unitCost = product.ingredients[ingredient];
+                const totalCost = unitCost * product.quantity;
+                totalIngredientsCost += totalCost;
+                html += `
+                    <div class="cost-item">
+                        <div>
+                            <div class="cost-label">${ingredient}</div>
+                            <div class="cost-calculation">${unitCost} ₸ × ${product.quantity} шт.</div>
+                        </div>
+                        <div class="cost-value">${totalCost.toLocaleString()} ₸</div>
+                    </div>
+                `;
+            }
+            
+            // Показываем стоимость закупа если есть
+            if (product.purchase) {
+                const totalPurchase = product.purchase * product.quantity;
+                totalIngredientsCost += totalPurchase;
+                html += `
+                    <div class="cost-item">
+                        <div>
+                            <div class="cost-label">🛒 Стоимость закупа товара</div>
+                            <div class="cost-calculation">${product.purchase} ₸ × ${product.quantity} шт.</div>
+                        </div>
+                        <div class="cost-value">${totalPurchase.toLocaleString()} ₸</div>
+                    </div>
+                `;
+            }
+            
+            // Итоговая сумма
+            html += `
+                <div class="cost-total">
+                    <div>💰 Общие затраты на ингредиенты</div>
+                    <div>${totalIngredientsCost.toLocaleString()} ₸</div>
+                </div>
+            `;
+            
+            body.innerHTML = html;
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        // Закрытие модального окна при клике вне его
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Загружаем данные при загрузке страницы
+        window.addEventListener('load', loadData);
+    </script>
+</body>
+</html>
