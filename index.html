@@ -669,9 +669,10 @@
                     throw new Error('Не удалось загрузить файл salesdata.txt');
                 }
                 const text = await response.text();
-                console.log('Загружен файл:', text.substring(0, 200)); // Для отладки
                 
-                const lines = text.trim().split('\n');
+                // Удаляем BOM если есть и разделяем по переносам строк
+                const cleanText = text.replace(/^\uFEFF/, '').replace(/\r/g, '');
+                const lines = cleanText.trim().split('\n');
                 
                 const period = lines[0].trim();
                 document.getElementById('period').textContent = `Отчёт по продажам за ${period}`;
@@ -688,30 +689,19 @@
                     if (!line || !line.trim()) continue;
                     
                     // Разделяем по табуляции
-                    const parts = line.split('\t');
+                    const parts = line.split('\t').map(p => p.trim());
                     
                     // Пропускаем строки без названия (итоговую строку)
-                    if (parts.length < 3 || !parts[0].trim()) {
-                        console.log('Пропущена строка (итого или некорректная):', line);
-                        continue;
-                    }
+                    if (parts.length < 3 || !parts[0]) continue;
                     
-                    const name = parts[0].trim();
+                    const name = parts[0];
                     const quantity = parseInt(parts[1]);
                     const amount = parseInt(parts[2]);
                     
-                    console.log(`Обработка: "${name}", кол-во: ${quantity}, сумма: ${amount}`);
-                    
-                    if (isNaN(quantity) || isNaN(amount)) {
-                        console.log('Некорректные числа в строке:', line);
-                        continue;
-                    }
+                    if (isNaN(quantity) || isNaN(amount)) continue;
                     
                     const productData = costData[name];
-                    if (!productData) {
-                        console.log('Нет данных для товара:', name);
-                        continue;
-                    }
+                    if (!productData) continue;
                     
                     const price = Math.round(amount / quantity);
                     
@@ -754,15 +744,13 @@
                     totalProfit += profit;
                 }
                 
-                const avgPrice = Math.round(totalAmount / totalSales);
-                
                 displayMetrics(totalSales, totalAmount, avgPrice, totalCosts, totalTaxes, totalProfit);
                 displayProducts(products);
                 
             } catch (error) {
-                console.error('Ошибка загрузки данных:', error);
-                document.getElementById('metrics').innerHTML = '<div class="loading">Ошибка загрузки данных</div>';
-                document.getElementById('products-list').innerHTML = '<div class="loading">Ошибка загрузки данных</div>';
+                document.getElementById('period').textContent = 'Ошибка загрузки данных: ' + error.message;
+                document.getElementById('metrics').innerHTML = '<div class="loading">Ошибка: ' + error.message + '</div>';
+                document.getElementById('products-list').innerHTML = '<div class="loading">Проверьте консоль браузера (F12) для подробностей</div>';
             }
         }
 
