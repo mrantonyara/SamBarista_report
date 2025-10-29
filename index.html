@@ -684,24 +684,21 @@
                 let totalProfit = 0;
                 
                 for (let i = 1; i < lines.length; i++) {
-                    const line = lines[i].trim();
-                    if (!line) continue;
+                    const line = lines[i];
+                    if (!line || !line.trim()) continue;
                     
-                    // Пробуем разделить по табуляции или по нескольким пробелам
-                    let parts = line.split('\t').filter(p => p.trim());
-                    if (parts.length < 3) {
-                        parts = line.split(/\s+/);
-                    }
-                    if (parts.length < 3) {
-                        console.log('Пропущена строка:', line);
+                    // Разделяем по табуляции
+                    const parts = line.split('\t');
+                    
+                    // Пропускаем строки без названия (итоговую строку)
+                    if (parts.length < 3 || !parts[0].trim()) {
+                        console.log('Пропущена строка (итого или некорректная):', line);
                         continue;
                     }
                     
-                    // Название - всё до последних двух чисел
-                    const lastTwo = parts.slice(-2);
-                    const quantity = parseInt(lastTwo[0]);
-                    const amount = parseInt(lastTwo[1]);
-                    const name = parts.slice(0, -2).join(' ').trim();
+                    const name = parts[0].trim();
+                    const quantity = parseInt(parts[1]);
+                    const amount = parseInt(parts[2]);
                     
                     console.log(`Обработка: "${name}", кол-во: ${quantity}, сумма: ${amount}`);
                     
