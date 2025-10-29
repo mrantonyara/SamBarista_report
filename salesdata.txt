@@ -4,23 +4,23 @@ Choco-Pie Dark	3	750
 Picnic	4	1800
 Twix	8	4400
 Американо 250ml (SamBarista)	1	490
-Горячий шоколад 250ml (SamBarista)	14	8260
-Горячий шоколад 350ml (SamBarista)	26	17940
+Горячии шоколад 250ml (SamBarista)	14	8260
+Горячии шоколад 350ml (SamBarista)	26	17940
 Какао 250ml (SamBarista)	11	6490
 Какао 350ml (SamBarista)	5	3450
 Капучино 250ml (SamBarista)	12	7080
 Капучино 350ml (SamBarista)	24	16560
-Кокосовый коктейль 250ml (SamBarista)	2	1180
-Кокосовый коктейль 350ml (SamBarista)	5	3450
-Кокосовый раф 250ml (SamBarista)	7	4130
-Кокосовый раф 350ml (SamBarista)	44	30360
-Кокосовый шоколад 250ml (SamBarista)	5	2950
-Кокосовый шоколад 350ml (SamBarista)	6	4140
+Кокосовыи коктеиль 250ml (SamBarista)	2	1180
+Кокосовыи коктеиль 350ml (SamBarista)	5	3450
+Кокосовыи раф 250ml (SamBarista)	7	4130
+Кокосовыи раф 350ml (SamBarista)	44	30360
+Кокосовыи шоколад 250ml (SamBarista)	5	2950
+Кокосовыи шоколад 350ml (SamBarista)	6	4140
 Латте 250ml (SamBarista)	18	10620
 Латте 350ml (SamBarista)	7	4830
 Моккачино 250ml (SamBarista)	6	3540
 Моккачино 350ml (SamBarista)	9	6210
-Таёжный чай 350ml (SamBarista)	3	1500
-Флэт Уайт 250ml (SamBarista)	4	2360
-Флэт Уайт 350ml (SamBarista)	18	12420
+Таежныи чаи 350ml (SamBarista)	3	1500
+Флэт Уаит 250ml (SamBarista)	4	2360
+Флэт Уаит 350ml (SamBarista)	18	12420
 	248	156410
