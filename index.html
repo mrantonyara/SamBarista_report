@@ -665,10 +665,15 @@
         async function loadData() {
             try {
                 const response = await fetch('salesdata.txt');
+                if (!response.ok) {
+                    throw new Error('Не удалось загрузить файл salesdata.txt');
+                }
                 const text = await response.text();
+                console.log('Загружен файл:', text.substring(0, 200)); // Для отладки
+                
                 const lines = text.trim().split('\n');
                 
-                const period = lines[0];
+                const period = lines[0].trim();
                 document.getElementById('period').textContent = `Отчёт по продажам за ${period}`;
                 
                 const products = [];
@@ -682,17 +687,34 @@
                     const line = lines[i].trim();
                     if (!line) continue;
                     
-                    const parts = line.split('\t');
-                    if (parts.length < 3) continue;
+                    // Пробуем разделить по табуляции или по нескольким пробелам
+                    let parts = line.split('\t').filter(p => p.trim());
+                    if (parts.length < 3) {
+                        parts = line.split(/\s+/);
+                    }
+                    if (parts.length < 3) {
+                        console.log('Пропущена строка:', line);
+                        continue;
+                    }
                     
-                    const name = parts[0].trim();
-                    const quantity = parseInt(parts[1]);
-                    const amount = parseInt(parts[2]);
+                    // Название - всё до последних двух чисел
+                    const lastTwo = parts.slice(-2);
+                    const quantity = parseInt(lastTwo[0]);
+                    const amount = parseInt(lastTwo[1]);
+                    const name = parts.slice(0, -2).join(' ').trim();
                     
-                    if (isNaN(quantity) || isNaN(amount)) continue;
+                    console.log(`Обработка: "${name}", кол-во: ${quantity}, сумма: ${amount}`);
+                    
+                    if (isNaN(quantity) || isNaN(amount)) {
+                        console.log('Некорректные числа в строке:', line);
+                        continue;
+                    }
                     
                     const productData = costData[name];
-                    if (!productData) continue;
+                    if (!productData) {
+                        console.log('Нет данных для товара:', name);
+                        continue;
+                    }
                     
                     const price = Math.round(amount / quantity);
                     
