@@ -963,6 +963,15 @@ Twix	8	4400
             `;
         }
 
+				function safeFileName(name) {
+		  return name
+		    .replace(/й/g, 'и')
+		    .replace(/Й/g, 'И')
+		    .replace(/ё/g, 'е')
+		    .replace(/Ё/g, 'Е');
+		}
+
+
         function displayProducts(products) {
             const container = document.getElementById('products-list');
             container.innerHTML = products.map(p => {
