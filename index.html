@@ -13,7 +13,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: #F5E6D3;
             min-height: 100vh;
             padding: 20px;
             color: #333;
@@ -22,10 +22,10 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
+            background: #FEFBF6;
             border-radius: 20px;
             padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 40px rgba(101, 67, 33, 0.1);
         }
 
         .header {
@@ -38,14 +38,14 @@
         .logo {
             font-size: 48px;
             font-weight: bold;
-            color: #2c3e50;
+            color: #6B4423;
             margin-bottom: 10px;
             letter-spacing: -1px;
         }
 
         .period {
             font-size: 18px;
-            color: #7f8c8d;
+            color: #8B6F47;
             font-weight: 500;
         }
 
@@ -57,11 +57,11 @@
         }
 
         .metric-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #8B6F47 0%, #6B4423 100%);
             color: white;
             padding: 25px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 20px rgba(107, 68, 35, 0.2);
             transition: transform 0.3s ease;
         }
 
@@ -70,23 +70,23 @@
         }
 
         .metric-card:nth-child(2) {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: linear-gradient(135deg, #A0826D 0%, #8B6F47 100%);
         }
 
         .metric-card:nth-child(3) {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            background: linear-gradient(135deg, #C9A882 0%, #A0826D 100%);
         }
 
         .metric-card:nth-child(4) {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            background: linear-gradient(135deg, #8B6F47 0%, #6B4423 100%);
         }
 
         .metric-card:nth-child(5) {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            background: linear-gradient(135deg, #A0826D 0%, #8B6F47 100%);
         }
 
         .metric-card:nth-child(6) {
-            background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+            background: linear-gradient(135deg, #6B4423 0%, #4A2C1A 100%);
         }
 
         .metric-label {
@@ -118,18 +118,19 @@
         .product-card {
             display: flex;
             align-items: center;
-            background: #fafafa;
+            background: #FFF9F0;
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(107, 68, 35, 0.08);
             transition: all 0.3s ease;
             gap: 20px;
+            border: 1px solid #F0E6D2;
         }
 
         .product-card:hover {
             transform: translateX(5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 6px 20px rgba(107, 68, 35, 0.12);
         }
 
         .product-image {
@@ -138,7 +139,7 @@
             border-radius: 10px;
             object-fit: cover;
             background: white;
-            border: 2px solid #e0e0e0;
+            border: 2px solid #E8D5B7;
             flex-shrink: 0;
         }
 
@@ -177,7 +178,7 @@
         }
 
         .info-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #8B6F47 0%, #6B4423 100%);
             color: white;
             border: none;
             width: 40px;
@@ -188,10 +189,12 @@
             cursor: pointer;
             transition: transform 0.2s ease;
             flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(107, 68, 35, 0.3);
         }
 
         .info-button:hover {
             transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(107, 68, 35, 0.4);
         }
 
         .modal {
@@ -213,7 +216,7 @@
         }
 
         .modal-content {
-            background: white;
+            background: #FEFBF6;
             border-radius: 20px;
             padding: 40px;
             max-width: 600px;
@@ -227,7 +230,7 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background: #e74c3c;
+            background: #D2691E;
             color: white;
             border: none;
             width: 35px;
@@ -236,12 +239,17 @@
             font-size: 20px;
             cursor: pointer;
             line-height: 1;
+            transition: background 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: #A0522D;
         }
 
         .modal-title {
             font-size: 24px;
             font-weight: bold;
-            color: #2c3e50;
+            color: #6B4423;
             margin-bottom: 25px;
             padding-right: 40px;
         }
@@ -249,27 +257,42 @@
         .cost-item {
             display: flex;
             justify-content: space-between;
-            padding: 15px;
-            background: #f8f9fa;
+            padding: 15px 20px;
+            background: white;
             border-radius: 10px;
             margin-bottom: 10px;
             align-items: center;
+            border: 1px solid #F0E6D2;
         }
 
         .cost-label {
             font-weight: 600;
-            color: #2c3e50;
+            color: #6B4423;
+            margin-bottom: 4px;
         }
 
         .cost-calculation {
-            color: #7f8c8d;
+            color: #8B6F47;
             font-size: 14px;
         }
 
         .cost-value {
             font-weight: bold;
-            color: #667eea;
-            font-size: 16px;
+            color: #6B4423;
+            font-size: 18px;
+        }
+
+        .cost-total {
+            background: linear-gradient(135deg, #8B6F47 0%, #6B4423 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
         }
 
         .loading {
@@ -371,7 +394,12 @@
                 cost: 207,
                 ingredients: {
                     "Кофе": 150,
-                    "Вода": 8
+                    "Вода": 8,
+                    "Палочка": 5,
+                    "Стакан": 25,
+                    "Манжет": 12,
+                    "Крышка": 20,
+                    "Сахар/Сироп": 30
                 }
             },
             "Горячий шоколад 250ml (SamBarista)": {
@@ -868,19 +896,28 @@ Twix	8	4400
             const title = document.getElementById('modal-title');
             const body = document.getElementById('modal-body');
             
-            title.textContent = `Детализация: ${product.name}`;
+            title.textContent = `Детализация себестоимости: ${product.name}`;
             
-            let html = '<div>';
+            let html = '<div style="margin-bottom: 15px; padding: 15px; background: #FFF9F0; border-radius: 10px; border-left: 4px solid #8B6F47;">';
+            html += '<div style="font-size: 14px; color: #8B6F47; margin-bottom: 8px;">📊 Общая информация</div>';
+            html += `<div style="color: #6B4423;"><strong>Количество продаж:</strong> ${product.quantity} шт.</div>`;
+            html += `<div style="color: #6B4423;"><strong>Себестоимость единицы:</strong> ${product.cost.toLocaleString()} ₸</div>`;
+            html += '</div>';
+            
+            html += '<div style="margin-bottom: 10px; font-size: 16px; font-weight: 600; color: #6B4423;">☕ Состав затрат на единицу товара:</div>';
+            
+            let totalIngredientsCost = 0;
             
             // Показываем ингредиенты
             for (const ingredient in product.ingredients) {
                 const unitCost = product.ingredients[ingredient];
                 const totalCost = unitCost * product.quantity;
+                totalIngredientsCost += totalCost;
                 html += `
                     <div class="cost-item">
                         <div>
                             <div class="cost-label">${ingredient}</div>
-                            <div class="cost-calculation">${product.quantity} × ${unitCost} ₸</div>
+                            <div class="cost-calculation">${unitCost} ₸ × ${product.quantity} шт.</div>
                         </div>
                         <div class="cost-value">${totalCost.toLocaleString()} ₸</div>
                     </div>
@@ -890,18 +927,26 @@ Twix	8	4400
             // Показываем стоимость закупа если есть
             if (product.purchase) {
                 const totalPurchase = product.purchase * product.quantity;
+                totalIngredientsCost += totalPurchase;
                 html += `
                     <div class="cost-item">
                         <div>
-                            <div class="cost-label">Стоимость закупа</div>
-                            <div class="cost-calculation">${product.quantity} × ${product.purchase} ₸</div>
+                            <div class="cost-label">🛒 Стоимость закупа товара</div>
+                            <div class="cost-calculation">${product.purchase} ₸ × ${product.quantity} шт.</div>
                         </div>
                         <div class="cost-value">${totalPurchase.toLocaleString()} ₸</div>
                     </div>
                 `;
             }
             
-            html += '</div>';
+            // Итоговая сумма
+            html += `
+                <div class="cost-total">
+                    <div>💰 Общие затраты на ингредиенты</div>
+                    <div>${totalIngredientsCost.toLocaleString()} ₸</div>
+                </div>
+            `;
+            
             body.innerHTML = html;
             modal.classList.add('active');
         }
