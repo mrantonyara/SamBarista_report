@@ -2,7 +2,7 @@
 Choco-Pie	6	1500
 Choco-Pie Dark	3	750
 Picnic	4	1800
-Twix	9	4400
+Twix	8	4400
 Американо 250ml (SamBarista)	1	490
 Горячий шоколад 250ml (SamBarista)	14	8260
 Горячий шоколад 350ml (SamBarista)	26	17940
