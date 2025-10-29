@@ -1,187 +1,820 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SamBarista Dashboard</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-  body {
-    font-family: "Segoe UI", sans-serif;
-    background: #f9fafb;
-    color: #111827;
-    margin: 0;
-    padding: 0;
-  }
-  header {
-    background: #f59e0b;
-    color: white;
-    padding: 1rem 2rem;
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: bold;
-  }
-  main {
-    max-width: 1200px;
-    margin: 2rem auto;
-    background: white;
-    padding: 2rem;
-    border-radius: 1rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  }
-  textarea {
-    width: 100%;
-    height: 160px;
-    font-family: monospace;
-    padding: 1rem;
-    border-radius: .5rem;
-    border: 1px solid #ddd;
-    resize: vertical;
-  }
-  button {
-    background: #f59e0b;
-    color: white;
-    border: none;
-    padding: .8rem 1.5rem;
-    font-size: 1rem;
-    border-radius: .5rem;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-  button:hover { background: #d97706; }
-  h2 { margin-top: 2rem; }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-  }
-  th, td {
-    border-bottom: 1px solid #eee;
-    text-align: left;
-    padding: .5rem;
-  }
-  th { background: #f3f4f6; }
-  .stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-  .card {
-    flex: 1 1 200px;
-    background: #fef3c7;
-    padding: 1rem;
-    border-radius: .75rem;
-    text-align: center;
-    font-weight: 600;
-  }
-  canvas { margin-top: 2rem; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SamBarista - Отчёт по продажам</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        .period {
+            font-size: 18px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .metric-card:nth-child(2) {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .metric-card:nth-child(3) {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .metric-card:nth-child(4) {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .metric-card:nth-child(5) {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .metric-card:nth-child(6) {
+            background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+        }
+
+        .metric-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .products {
+            margin-top: 30px;
+        }
+
+        .products-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .product-card {
+            display: flex;
+            align-items: center;
+            background: #fafafa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            gap: 20px;
+        }
+
+        .product-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .product-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: white;
+            border: 2px solid #e0e0e0;
+            flex-shrink: 0;
+        }
+
+        .product-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            flex: 1;
+            align-items: center;
+        }
+
+        .product-name {
+            font-weight: bold;
+            font-size: 16px;
+            color: #2c3e50;
+            grid-column: 1 / -1;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 11px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .info-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .info-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .info-button:hover {
+            transform: scale(1.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            padding-right: 40px;
+        }
+
+        .cost-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .cost-label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .cost-calculation {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .cost-value {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 16px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+            color: #7f8c8d;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .logo {
+                font-size: 36px;
+            }
+
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .product-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .product-info {
+                grid-template-columns: 1fr;
+                width: 100%;
+            }
+
+            .product-name {
+                grid-column: 1;
+            }
+
+            .modal-content {
+                padding: 30px 20px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">SamBarista</div>
+            <div class="period" id="period">Загрузка...</div>
+        </div>
 
-<header>☕ SamBarista Dashboard</header>
+        <div class="metrics" id="metrics">
+            <div class="loading">Загрузка данных...</div>
+        </div>
 
-<main>
-  <h2>Вставь отчёт о продажах</h2>
-  <p>Формат: <code>Название\tКоличество\tСумма</code> (в виде таблицы, как у тебя в примере)</p>
-  <textarea id="inputData" placeholder="Вставь сюда текст отчёта..."></textarea><br><br>
-  <button onclick="analyze()">Анализировать</button>
-
-  <div id="summary"></div>
-  <canvas id="salesChart"></canvas>
-
-  <h2>Детализация по напиткам</h2>
-  <div id="details"></div>
-</main>
-
-<script>
-const baseProducts = {
-  "Choco-Pie": { price: 250, purchase: 130, coffee: 0, milk: 0, chocolate: 0, coconut: 0, water: 0, stick: 1, straw: 0, cup: 1, sleeve: 1, lid: 1, sugar: 0 },
-  "Choco-Pie Dark": { price: 250, purchase: 130, cup: 1, sleeve: 1, lid: 1 },
-  "Picnic": { price: 450, purchase: 250, cup: 1, sleeve: 1, lid: 1 },
-  "Twix": { price: 550, purchase: 300, cup: 1, sleeve: 1, lid: 1 },
-  "Американо 250ml (SamBarista)": { price: 490, purchase: 100, coffee: 1, water: 250, cup: 1, lid: 1, sugar: 1 },
-  "Горячий шоколад 250ml (SamBarista)": { price: 590, purchase: 180, coffee: 0, milk: 120, chocolate: 30, cup: 1, lid: 1, sugar: 1 },
-  "Горячий шоколад 350ml (SamBarista)": { price: 690, purchase: 200, milk: 150, chocolate: 40, cup: 1, lid: 1 },
-  "Какао 250ml (SamBarista)": { price: 590, purchase: 150, milk: 120, chocolate: 25, cup: 1, lid: 1 },
-  "Какао 350ml (SamBarista)": { price: 690, purchase: 170, milk: 150, chocolate: 30, cup: 1, lid: 1 },
-  "Капучино 250ml (SamBarista)": { price: 590, purchase: 180, coffee: 1, milk: 120, cup: 1, lid: 1, sugar: 1 },
-  "Капучино 350ml (SamBarista)": { price: 690, purchase: 200, coffee: 1, milk: 150, cup: 1, lid: 1, sugar: 1 },
-  "Кокосовый коктейль 250ml (SamBarista)": { price: 590, purchase: 200, milk: 120, coconut: 30, cup: 1, lid: 1 },
-  "Кокосовый коктейль 350ml (SamBarista)": { price: 690, purchase: 220, milk: 150, coconut: 40, cup: 1, lid: 1 },
-  "Кокосовый раф 250ml (SamBarista)": { price: 590, purchase: 200, coffee: 1, milk: 120, coconut: 30, cup: 1, lid: 1 },
-  "Кокосовый раф 350ml (SamBarista)": { price: 690, purchase: 220, coffee: 1, milk: 150, coconut: 40, cup: 1, lid: 1 },
-  "Кокосовый шоколад 250ml (SamBarista)": { price: 590, purchase: 200, milk: 120, chocolate: 30, coconut: 20, cup: 1, lid: 1 },
-  "Кокосовый шоколад 350ml (SamBarista)": { price: 690, purchase: 220, milk: 150, chocolate: 40, coconut: 25, cup: 1, lid: 1 },
-  "Латте 250ml (SamBarista)": { price: 590, purchase: 180, coffee: 1, milk: 120, cup: 1, lid: 1, sugar: 1 },
-  "Латте 350ml (SamBarista)": { price: 690, purchase: 200, coffee: 1, milk: 150, cup: 1, lid: 1, sugar: 1 },
-  "Моккачино 250ml (SamBarista)": { price: 590, purchase: 200, coffee: 1, milk: 120, chocolate: 25, cup: 1, lid: 1 },
-  "Моккачино 350ml (SamBarista)": { price: 690, purchase: 220, coffee: 1, milk: 150, chocolate: 35, cup: 1, lid: 1 },
-  "Таёжный чай 350ml (SamBarista)": { price: 500, purchase: 150, water: 350, cup: 1, lid: 1 },
-  "Флэт Уайт 250ml (SamBarista)": { price: 590, purchase: 200, coffee: 1, milk: 120, cup: 1, lid: 1 },
-  "Флэт Уайт 350ml (SamBarista)": { price: 690, purchase: 220, coffee: 1, milk: 150, cup: 1, lid: 1 },
-};
-
-function analyze() {
-  const text = document.getElementById('inputData').value.trim();
-  if (!text) return alert("Вставь текст отчёта!");
-  
-  const lines = text.split(/\n/);
-  const results = [];
-  let totalSales = 0, totalQty = 0, totalProfit = 0;
-  
-  lines.forEach(line => {
-    const [name, qtyStr, sumStr] = line.split(/\t/);
-    const qty = parseInt(qtyStr) || 0;
-    const sum = parseFloat(sumStr) || 0;
-    const base = baseProducts[name];
-    if (!base) return;
-    const revenue = sum;
-    const cost = base.purchase * qty;
-    const profit = revenue - cost;
-    results.push({ name, qty, revenue, profit, cost });
-    totalSales += revenue;
-    totalQty += qty;
-    totalProfit += profit;
-  });
-  
-  document.getElementById('summary').innerHTML = `
-    <h2>📊 Итоги</h2>
-    <div class="stats">
-      <div class="card">Общая выручка<br><b>${totalSales.toLocaleString()} ₸</b></div>
-      <div class="card">Всего продаж<br><b>${totalQty}</b></div>
-      <div class="card">Средняя сумма продажи<br><b>${(totalSales / totalQty || 0).toFixed(0)} ₸</b></div>
-      <div class="card">Прибыль<br><b>${totalProfit.toLocaleString()} ₸</b></div>
+        <div class="products">
+            <div class="products-title">Детализация продаж</div>
+            <div id="products-list">
+                <div class="loading">Загрузка продуктов...</div>
+            </div>
+        </div>
     </div>
-  `;
 
-  // График
-  const ctx = document.getElementById('salesChart').getContext('2d');
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: results.map(r => r.name),
-      datasets: [{ label: 'Выручка (₸)', data: results.map(r => r.revenue) }]
-    },
-    options: { responsive: true, plugins: { legend: { display: false } } }
-  });
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <div class="modal-title" id="modal-title"></div>
+            <div id="modal-body"></div>
+        </div>
+    </div>
 
-  // Детализация
-  let html = `<table><tr><th>Напиток</th><th>Продано</th><th>Выручка</th><th>Себестоимость</th><th>Прибыль</th></tr>`;
-  results.forEach(r => {
-    html += `<tr>
-      <td>${r.name}</td>
-      <td>${r.qty}</td>
-      <td>${r.revenue.toLocaleString()} ₸</td>
-      <td>${r.cost.toLocaleString()} ₸</td>
-      <td>${r.profit.toLocaleString()} ₸</td>
-    </tr>`;
-  });
-  html += `</table>`;
-  document.getElementById('details').innerHTML = html;
-}
-</script>
+    <script>
+        // Фиксированные данные о себестоимости из CSV
+        const costData = {
+            "Choco-Pie": {
+                price: 250,
+                cost: 165,
+                purchase: 130,
+                ingredients: {}
+            },
+            "Choco-Pie Dark": {
+                price: 250,
+                cost: 165,
+                purchase: 130,
+                ingredients: {}
+            },
+            "Picnic": {
+                price: 450,
+                cost: 361,
+                purchase: 314,
+                ingredients: {}
+            },
+            "Twix": {
+                price: 550,
+                cost: 418,
+                purchase: 365,
+                ingredients: {}
+            },
+            "Американо 250ml (SamBarista)": {
+                price: 490,
+                cost: 207,
+                ingredients: {
+                    "Кофе": 150,
+                    "Вода": 8
+                }
+            },
+            "Горячий шоколад 250ml (SamBarista)": {
+                price: 590,
+                cost: 363,
+                ingredients: {
+                    "Шоколад": 200,
+                    "Вода": 8,
+                    "Палочка": 5,
+                    "Трубочка": 8,
+                    "Стакан": 25,
+                    "Манжет": 12,
+                    "Крышка": 20,
+                    "Сахар/Сироп": 30
+                }
+            },
+            "Горячий шоколад 350ml (SamBarista)": {
+                price: 690,
+                cost: 419,
+                ingredients: {
+                    "Шоколад": 250,
+                    "Вода": 8,
+                    "Палочка": 5,
+                    "Трубочка": 8,
+                    "Стакан": 25,
+                    "Манжет": 12,
+                    "Крышка": 20,
+                    "Сахар/Сироп": 30
+                }
+            },
+            "Какао 250ml (SamBarista)": {
+                price: 590,
+                cost: 383,
+                ingredients: {
+                    "Молоко": 120,
+                    "Шоколад": 100,
+                    "Вода": 8,
+                    "Палочка": 5,
+                    "Трубочка": 8,
+                    "Стакан": 25,
+                    "Манжет": 12,
+                    "Крышка": 20,
+                    "Сахар/Сироп": 30
+                }
+            },
+            "Какао 350ml (SamBarista)": {
+                price: 690,
+                cost: 439,
+                ingredients: {
+                    "Молоко": 150,
+                    "Шоколад": 120,
+                    "Вода": 8,
+                    "Палочка": 5,
+                    "Трубочка": 8,
+                    "Стакан": 25,
+                    "Манжет": 12,
+                    "Крышка": 20,
+                    "Сахар/Сироп": 30
+                }
+            },
+            "Капучино 250ml (SamBarista)": {
+                price: 590,
+                cost: 383,
+                ingredients: {
+                    "Кофе": 100,
+                    "Молоко": 120,
+                    "Вода": 8,
+                    "Палочка": 5,
+                    "Трубочка": 8,
+                    "Стакан": 25,
+                    "Манжет": 12,
+                    "Крышка": 20,
+                    "Сахар/Сироп": 30
+                }
+            },
+            "Капучино 350ml (SamBarista)": {
+                price: 690,
+                cost: 439,
+                ingredients: {
+                    "Кофе": 120,
+                    "Молоко": 150,
+                    "Вода": 8,
+                    "Палочка": 5,
+                    "Трубочка": 8,
+                    "Стакан": 25,
+                    "Манжет": 12,
+                    "Крышка": 20,
+                    "Сахар/Сироп": 30
+                }
+            },
+            "Кокосовый коктейль 250ml (SamBarista)": {
+                price: 590,
+                cost: 383,
+                ingredients: {
+                    "Молоко": 120,
+                    "Кокос": 100,
+                    "Вода": 8,
+                    "Палочка": 5,
+                    "Трубочка": 8,
+                    "Стакан": 25,
+                    "Манжет": 12,
+                    "Крышка": 20,
+                    "Сахар/Сироп": 30
+                }
+            },
+            "Кокосовый коктейль 350ml (SamBarista)": {
+                price: 690,
+                cost: 439,
+                ingredients: {
+                    "Молоко": 150,
+                    "Кокос": 120,
+                    "Вода": 8,
+                    "Палочка": 5,
+                    "Трубочка": 8,
+                    "Стакан": 25,
+                    "Манжет": 12,
+                    "Крышка": 20,
+                    "Сахар/Сироп": 30
+                }
+            },
+            "Кокосовый раф 250ml (SamBarista)": {
+                price: 590,
+                cost: 483,
+                ingredients: {
+                    "Кофе": 100,
+                    "Молоко": 120,
+                    "Кокос": 100,
+                    "Вода": 8,
+                    "Палочка": 5,
+                    "Трубочка": 8,
+                    "Стакан": 25,
+                    "Манжет": 12,
+                    "Крышка": 20,
+                    "Сахар/Сироп": 30
+                }
+            },
+            "Кокосовый раф 350ml (SamBarista)": {
+                price: 690,
+                cost: 559,
+                ingredients: {
+                    "Кофе": 120,
+                    "Молоко": 150,
+                    "Кокос": 120,
+                    "Вода": 8,
+                    "Палочка": 5,
+                    "Трубочка": 8,
+                    "Стакан": 25,
+                    "Манжет": 12,
+                    "Крышка": 20,
+                    "Сахар/Сироп": 30
+                }
+            },
+            "Кокосовый шоколад 250ml (SamBarista)": {
+                price: 590,
+                cost: 383,
+                ingredients: {
+                    "Шоколад": 120,
+                    "Кокос": 100,
+                    "Вода": 8,
+                    "Палочка": 5,
+                    "Трубочка": 8,
+                    "Стакан": 25,
+                    "Манжет": 12,
+                    "Крышка": 20,
+                    "Сахар/Сироп": 30
+                }
+            },
+            "Кокосовый шоколад 350ml (SamBarista)": {
+                price: 690,
+                cost: 439,
+                ingredients: {
+                    "Шоколад": 150,
+                    "Кокос": 120,
+                    "Вода": 8,
+                    "Палочка": 5,
+                    "Трубочка": 8,
+                    "Стакан": 25,
+                    "Манжет": 12,
+                    "Крышка": 20,
+                    "Сахар/Сироп": 30
+                }
+            },
+            "Латте 250ml (SamBarista)": {
+                price: 590,
+                cost: 433,
+                ingredients: {
+                    "Кофе": 120,
+                    "Молоко": 150,
+                    "Вода": 8,
+                    "Палочка": 5,
+                    "Трубочка": 8,
+                    "Стакан": 25,
+                    "Манжет": 12,
+                    "Крышка": 20,
+                    "Сахар/Сироп": 30
+                }
+            },
+            "Латте 350ml (SamBarista)": {
+                price: 690,
+                cost: 499,
+                ingredients: {
+                    "Кофе": 150,
+                    "Молоко": 180,
+                    "Вода": 8,
+                    "Палочка": 5,
+                    "Трубочка": 8,
+                    "Стакан": 25,
+                    "Манжет": 12,
+                    "Крышка": 20,
+                    "Сахар/Сироп": 30
+                }
+            },
+            "Моккачино 250ml (SamBarista)": {
+                price: 590,
+                cost: 463,
+                ingredients: {
+                    "Кофе": 100,
+                    "Молоко": 100,
+                    "Шоколад": 100,
+                    "Вода": 8,
+                    "Палочка": 5,
+                    "Трубочка": 8,
+                    "Стакан": 25,
+                    "Манжет": 12,
+                    "Крышка": 20,
+                    "Сахар/Сироп": 30
+                }
+            },
+            "Моккачино 350ml (SamBarista)": {
+                price: 690,
+                cost: 529,
+                ingredients: {
+                    "Кофе": 120,
+                    "Молоко": 120,
+                    "Шоколад": 120,
+                    "Вода": 8,
+                    "Палочка": 5,
+                    "Трубочка": 8,
+                    "Стакан": 25,
+                    "Манжет": 12,
+                    "Крышка": 20,
+                    "Сахар/Сироп": 30
+                }
+            },
+            "Таёжный чай 350ml (SamBarista)": {
+                price: 500,
+                cost: 348,
+                purchase: 190,
+                ingredients: {
+                    "Вода": 8,
+                    "Палочка": 5,
+                    "Трубочка": 8,
+                    "Стакан": 25,
+                    "Манжет": 12,
+                    "Крышка": 20,
+                    "Сахар/Сироп": 30
+                }
+            },
+            "Флэт Уайт 250ml (SamBarista)": {
+                price: 590,
+                cost: 413,
+                ingredients: {
+                    "Кофе": 100,
+                    "Молоко": 150,
+                    "Вода": 8,
+                    "Палочка": 5,
+                    "Трубочка": 8,
+                    "Стакан": 25,
+                    "Манжет": 12,
+                    "Крышка": 20,
+                    "Сахар/Сироп": 30
+                }
+            },
+            "Флэт Уайт 350ml (SamBarista)": {
+                price: 690,
+                cost: 469,
+                ingredients: {
+                    "Кофе": 120,
+                    "Молоко": 180,
+                    "Вода": 8,
+                    "Палочка": 5,
+                    "Трубочка": 8,
+                    "Стакан": 25,
+                    "Манжет": 12,
+                    "Крышка": 20,
+                    "Сахар/Сироп": 30
+                }
+            }
+        };
 
-</body>
-</html>
+        async function loadData() {
+            try {
+                const response = await fetch('salesdata.txt');
+                const text = await response.text();
+                const lines = text.trim().split('\n');
+                
+                const period = lines[0];
+                document.getElementById('period').textContent = `Отчёт по продажам за ${period}`;
+                
+                const products = [];
+                let totalSales = 0;
+                let totalAmount = 0;
+                let totalCosts = 0;
+                let totalTaxes = 0;
+                let totalProfit = 0;
+                
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (!line) continue;
+                    
+                    const parts = line.split('\t');
+                    if (parts.length < 3) continue;
+                    
+                    const name = parts[0].trim();
+                    const quantity = parseInt(parts[1]);
+                    const amount = parseInt(parts[2]);
+                    
+                    if (isNaN(quantity) || isNaN(amount)) continue;
+                    
+                    const productData = costData[name];
+                    if (!productData) continue;
+                    
+                    const price = Math.round(amount / quantity);
+                    
+                    // Расчёт затрат на ингредиенты
+                    let ingredientsCost = 0;
+                    for (const ingredient in productData.ingredients) {
+                        ingredientsCost += productData.ingredients[ingredient] * quantity;
+                    }
+                    
+                    // Добавляем стоимость закупа если есть
+                    if (productData.purchase) {
+                        ingredientsCost += productData.purchase * quantity;
+                    }
+                    
+                    // Налоги: эквайринг (3%) + налог (3%) + ОФД
+                    const acquiring = Math.round(amount * 0.03);
+                    const tax = Math.round(amount * 0.03);
+                    const ofd = Math.round(quantity * 19.6);
+                    const taxes = acquiring + tax + ofd;
+                    
+                    // Чистая прибыль = Сумма продаж - Затраты на ингредиенты - Налоги
+                    const profit = amount - ingredientsCost - taxes;
+                    
+                    products.push({
+                        name,
+                        quantity,
+                        price,
+                        amount,
+                        cost: productData.cost,
+                        ingredientsCost,
+                        profit,
+                        ingredients: productData.ingredients,
+                        purchase: productData.purchase
+                    });
+                    
+                    totalSales += quantity;
+                    totalAmount += amount;
+                    totalCosts += ingredientsCost;
+                    totalTaxes += taxes;
+                    totalProfit += profit;
+                }
+                
+                const avgPrice = Math.round(totalAmount / totalSales);
+                
+                displayMetrics(totalSales, totalAmount, avgPrice, totalCosts, totalTaxes, totalProfit);
+                displayProducts(products);
+                
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+                document.getElementById('metrics').innerHTML = '<div class="loading">Ошибка загрузки данных</div>';
+                document.getElementById('products-list').innerHTML = '<div class="loading">Ошибка загрузки данных</div>';
+            }
+        }
+
+        function displayMetrics(sales, amount, avg, costs, taxes, profit) {
+            const metrics = document.getElementById('metrics');
+            metrics.innerHTML = `
+                <div class="metric-card">
+                    <div class="metric-label">Общее число продаж</div>
+                    <div class="metric-value">${sales}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Общая сумма продаж</div>
+                    <div class="metric-value">${amount.toLocaleString()} ₸</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Средняя цена продажи</div>
+                    <div class="metric-value">${avg.toLocaleString()} ₸</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Затраты (без налогов)</div>
+                    <div class="metric-value">${costs.toLocaleString()} ₸</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Налоги</div>
+                    <div class="metric-value">${taxes.toLocaleString()} ₸</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Чистая прибыль</div>
+                    <div class="metric-value">${profit.toLocaleString()} ₸</div>
+                </div>
+            `;
+        }
+
+        function displayProducts(products) {
+            const container = document.getElementById('products-list');
+            container.innerHTML = products.map(p => `
+                <div class="product-card">
+                    <img src="${p.name}.png" alt="${p.name}" class="product-image" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2216%22 fill=%22%23999%22%3EНет фото%3C/text%3E%3C/svg%3E'">
+                    <div class="product-info">
+                        <div class="product-name">${p.name}</div>
+                        <div class="info-item">
+                            <div class="info-label">Кол-во продаж</div>
+                            <div class="info-value">${p.quantity}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Цена розничная</div>
+                            <div class="info-value">${p.price.toLocaleString()} ₸</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Сумма продаж</div>
+                            <div class="info-value">${p.amount.toLocaleString()} ₸</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Себестоимость</div>
+                            <div class="info-value">${p.cost.toLocaleString()} ₸</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Чистая прибыль</div>
+                            <div class="info-value">${p.profit.toLocaleString()} ₸</div>
+                        </div>
+                    </div>
+                    <button class="info-button" onclick='showDetails(${JSON.stringify(p)})'>i</button>
+                </div>
+            `).join('');
+        }
+
+        function showDetails(product) {
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const body = document.getElementById('modal-body');
+            
+            title.textContent = `Детализация: ${product.name}`;
+            
+            let html = '<div>';
