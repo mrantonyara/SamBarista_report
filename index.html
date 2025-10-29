@@ -38,14 +38,14 @@
         .logo {
             font-size: 48px;
             font-weight: bold;
-            color: #6B4423;
+            color: #357ABD;
             margin-bottom: 10px;
             letter-spacing: -1px;
         }
 
         .period {
             font-size: 18px;
-            color: #8B6F47;
+            color: #4A90E2;
             font-weight: 500;
         }
 
@@ -57,12 +57,14 @@
         }
 
         .metric-card {
-            background: linear-gradient(135deg, #8B6F47 0%, #6B4423 100%);
+            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
             color: white;
             padding: 25px;
             border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(107, 68, 35, 0.2);
+            box-shadow: 0 8px 20px rgba(74, 144, 226, 0.25);
             transition: transform 0.3s ease;
+            position: relative;
+            cursor: pointer;
         }
 
         .metric-card:hover {
@@ -70,23 +72,64 @@
         }
 
         .metric-card:nth-child(2) {
-            background: linear-gradient(135deg, #A0826D 0%, #8B6F47 100%);
+            background: linear-gradient(135deg, #5BA3F5 0%, #4A90E2 100%);
         }
 
         .metric-card:nth-child(3) {
-            background: linear-gradient(135deg, #C9A882 0%, #A0826D 100%);
+            background: linear-gradient(135deg, #6FB6FF 0%, #5BA3F5 100%);
         }
 
         .metric-card:nth-child(4) {
-            background: linear-gradient(135deg, #8B6F47 0%, #6B4423 100%);
+            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
         }
 
         .metric-card:nth-child(5) {
-            background: linear-gradient(135deg, #A0826D 0%, #8B6F47 100%);
+            background: linear-gradient(135deg, #5BA3F5 0%, #4A90E2 100%);
         }
 
         .metric-card:nth-child(6) {
-            background: linear-gradient(135deg, #6B4423 0%, #4A2C1A 100%);
+            background: linear-gradient(135deg, #357ABD 0%, #2E6DA4 100%);
+        }
+
+        .metric-tooltip {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 10px;
+            background: white;
+            color: #333;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            z-index: 100;
+            min-width: 250px;
+            font-size: 14px;
+        }
+
+        .metric-card:hover .metric-tooltip {
+            display: block;
+        }
+
+        .tooltip-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .tooltip-item:last-child {
+            border-bottom: none;
+        }
+
+        .tooltip-label {
+            color: #666;
+        }
+
+        .tooltip-value {
+            font-weight: 600;
+            color: #333;
         }
 
         .metric-label {
@@ -109,7 +152,7 @@
         .products-title {
             font-size: 28px;
             font-weight: bold;
-            color: #2c3e50;
+            color: #357ABD;
             margin-bottom: 30px;
             padding-bottom: 15px;
             border-bottom: 2px solid #f0f0f0;
@@ -118,28 +161,28 @@
         .product-card {
             display: flex;
             align-items: center;
-            background: #FFF9F0;
+            background: #FAFAFA;
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 15px;
-            box-shadow: 0 4px 12px rgba(107, 68, 35, 0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
             transition: all 0.3s ease;
             gap: 20px;
-            border: 1px solid #F0E6D2;
+            border: 1px solid #F0F0F0;
         }
 
         .product-card:hover {
             transform: translateX(5px);
-            box-shadow: 0 6px 20px rgba(107, 68, 35, 0.12);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
         }
 
         .product-image {
-            width: 100px;
+            width: 92px;
             height: 100px;
             border-radius: 10px;
             object-fit: cover;
             background: white;
-            border: 2px solid #E8D5B7;
+            border: 2px solid #E8E8E8;
             flex-shrink: 0;
         }
 
@@ -154,7 +197,7 @@
         .product-name {
             font-weight: bold;
             font-size: 16px;
-            color: #2c3e50;
+            color: #357ABD;
             grid-column: 1 / -1;
         }
 
@@ -174,11 +217,11 @@
         .info-value {
             font-size: 15px;
             font-weight: 600;
-            color: #2c3e50;
+            color: #357ABD;
         }
 
         .info-button {
-            background: linear-gradient(135deg, #8B6F47 0%, #6B4423 100%);
+            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
             color: white;
             border: none;
             width: 40px;
@@ -189,12 +232,12 @@
             cursor: pointer;
             transition: transform 0.2s ease;
             flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(107, 68, 35, 0.3);
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
         }
 
         .info-button:hover {
             transform: scale(1.1);
-            box-shadow: 0 6px 16px rgba(107, 68, 35, 0.4);
+            box-shadow: 0 6px 16px rgba(74, 144, 226, 0.4);
         }
 
         .modal {
@@ -216,7 +259,7 @@
         }
 
         .modal-content {
-            background: #FEFBF6;
+            background: white;
             border-radius: 20px;
             padding: 40px;
             max-width: 600px;
@@ -230,7 +273,7 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background: #D2691E;
+            background: #E74C3C;
             color: white;
             border: none;
             width: 35px;
@@ -243,13 +286,13 @@
         }
 
         .modal-close:hover {
-            background: #A0522D;
+            background: #C0392B;
         }
 
         .modal-title {
             font-size: 24px;
             font-weight: bold;
-            color: #6B4423;
+            color: #357ABD;
             margin-bottom: 25px;
             padding-right: 40px;
         }
@@ -258,32 +301,32 @@
             display: flex;
             justify-content: space-between;
             padding: 15px 20px;
-            background: white;
+            background: #FAFAFA;
             border-radius: 10px;
             margin-bottom: 10px;
             align-items: center;
-            border: 1px solid #F0E6D2;
+            border: 1px solid #F0F0F0;
         }
 
         .cost-label {
             font-weight: 600;
-            color: #6B4423;
+            color: #357ABD;
             margin-bottom: 4px;
         }
 
         .cost-calculation {
-            color: #8B6F47;
+            color: #4A90E2;
             font-size: 14px;
         }
 
         .cost-value {
             font-weight: bold;
-            color: #6B4423;
+            color: #357ABD;
             font-size: 18px;
         }
 
         .cost-total {
-            background: linear-gradient(135deg, #8B6F47 0%, #6B4423 100%);
+            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
             color: white;
             padding: 20px;
             border-radius: 10px;
@@ -754,6 +797,28 @@ Twix	8	4400
                 let totalTaxes = 0;
                 let totalProfit = 0;
                 
+                // Детализация затрат и налогов
+                const costsBreakdown = {
+                    'Кофе': 0,
+                    'Молоко': 0,
+                    'Шоколад': 0,
+                    'Кокос': 0,
+                    'Вода': 0,
+                    'Палочка': 0,
+                    'Трубочка': 0,
+                    'Стакан': 0,
+                    'Манжет': 0,
+                    'Крышка': 0,
+                    'Сахар/Сироп': 0,
+                    'Закуп товара': 0
+                };
+                
+                const taxesBreakdown = {
+                    'Эквайринг (3%)': 0,
+                    'Налог (3%)': 0,
+                    'ОФД + лицензия': 0
+                };
+                
                 for (let i = 1; i < lines.length; i++) {
                     const line = lines[i].trim();
                     if (!line) continue;
@@ -780,12 +845,16 @@ Twix	8	4400
                     // Расчёт затрат на ингредиенты
                     let ingredientsCost = 0;
                     for (const ingredient in productData.ingredients) {
-                        ingredientsCost += productData.ingredients[ingredient] * quantity;
+                        const cost = productData.ingredients[ingredient] * quantity;
+                        ingredientsCost += cost;
+                        costsBreakdown[ingredient] += cost;
                     }
                     
                     // Добавляем стоимость закупа если есть
                     if (productData.purchase) {
-                        ingredientsCost += productData.purchase * quantity;
+                        const purchaseCost = productData.purchase * quantity;
+                        ingredientsCost += purchaseCost;
+                        costsBreakdown['Закуп товара'] += purchaseCost;
                     }
                     
                     // Налоги: эквайринг (3%) + налог (3%) + ОФД
@@ -793,6 +862,10 @@ Twix	8	4400
                     const tax = Math.round(amount * 0.03);
                     const ofd = Math.round(quantity * 19.6);
                     const taxes = acquiring + tax + ofd;
+                    
+                    taxesBreakdown['Эквайринг (3%)'] += acquiring;
+                    taxesBreakdown['Налог (3%)'] += tax;
+                    taxesBreakdown['ОФД + лицензия'] += ofd;
                     
                     // Чистая прибыль = Сумма продаж - Затраты на ингредиенты - Налоги
                     const profit = amount - ingredientsCost - taxes;
@@ -818,7 +891,12 @@ Twix	8	4400
                 
                 const avgPrice = totalSales > 0 ? Math.round(totalAmount / totalSales) : 0;
                 
-                displayMetrics(totalSales, totalAmount, avgPrice, totalCosts, totalTaxes, totalProfit);
+                // Удаляем нулевые значения из детализации
+                Object.keys(costsBreakdown).forEach(key => {
+                    if (costsBreakdown[key] === 0) delete costsBreakdown[key];
+                });
+                
+                displayMetrics(totalSales, totalAmount, avgPrice, totalCosts, totalTaxes, totalProfit, costsBreakdown, taxesBreakdown);
                 displayProducts(products);
                 
             } catch (error) {
@@ -828,43 +906,74 @@ Twix	8	4400
             }
         }
 
-        function displayMetrics(sales, amount, avg, costs, taxes, profit) {
+        function displayMetrics(totalSales, totalAmount, avgPrice, totalCosts, totalTaxes, totalProfit, costsBreakdown, taxesBreakdown) {
             const metrics = document.getElementById('metrics');
+            
+            // Формируем tooltip для затрат
+            let costsTooltip = '<div class="metric-tooltip">';
+            for (const [key, value] of Object.entries(costsBreakdown)) {
+                costsTooltip += `
+                    <div class="tooltip-item">
+                        <span class="tooltip-label">${key}</span>
+                        <span class="tooltip-value">${value.toLocaleString()} ₸</span>
+                    </div>
+                `;
+            }
+            costsTooltip += '</div>';
+            
+            // Формируем tooltip для налогов
+            let taxesTooltip = '<div class="metric-tooltip">';
+            for (const [key, value] of Object.entries(taxesBreakdown)) {
+                taxesTooltip += `
+                    <div class="tooltip-item">
+                        <span class="tooltip-label">${key}</span>
+                        <span class="tooltip-value">${value.toLocaleString()} ₸</span>
+                    </div>
+                `;
+            }
+            taxesTooltip += '</div>';
+            
             metrics.innerHTML = `
                 <div class="metric-card">
                     <div class="metric-label">Общее число продаж</div>
-                    <div class="metric-value">${sales}</div>
+                    <div class="metric-value">${totalSales}</div>
                 </div>
                 <div class="metric-card">
                     <div class="metric-label">Общая сумма продаж</div>
-                    <div class="metric-value">${amount.toLocaleString()} ₸</div>
+                    <div class="metric-value">${totalAmount.toLocaleString()} ₸</div>
                 </div>
                 <div class="metric-card">
                     <div class="metric-label">Средняя цена продажи</div>
-                    <div class="metric-value">${avg.toLocaleString()} ₸</div>
+                    <div class="metric-value">${avgPrice.toLocaleString()} ₸</div>
                 </div>
                 <div class="metric-card">
-                    <div class="metric-label">Затраты (без налогов)</div>
-                    <div class="metric-value">${costs.toLocaleString()} ₸</div>
+                    <div class="metric-label">Затраты (без учёта налогов)</div>
+                    <div class="metric-value">${totalCosts.toLocaleString()} ₸</div>
+                    ${costsTooltip}
                 </div>
                 <div class="metric-card">
                     <div class="metric-label">Налоги</div>
-                    <div class="metric-value">${taxes.toLocaleString()} ₸</div>
+                    <div class="metric-value">${totalTaxes.toLocaleString()} ₸</div>
+                    ${taxesTooltip}
                 </div>
                 <div class="metric-card">
                     <div class="metric-label">Чистая прибыль</div>
-                    <div class="metric-value">${profit.toLocaleString()} ₸</div>
+                    <div class="metric-value">${totalProfit.toLocaleString()} ₸</div>
                 </div>
             `;
         }
 
         function displayProducts(products) {
             const container = document.getElementById('products-list');
-            container.innerHTML = products.map(p => `
+            container.innerHTML = products.map(p => {
+                // Убираем "(SamBarista)" из названия для отображения
+                const displayName = p.name.replace(' (SamBarista)', '');
+                
+                return `
                 <div class="product-card">
-                    <img src="${p.name}.png" alt="${p.name}" class="product-image" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2216%22 fill=%22%23999%22%3EНет фото%3C/text%3E%3C/svg%3E'">
+                    <img src="${p.name}.png" alt="${displayName}" class="product-image" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2216%22 fill=%22%23999%22%3EНет фото%3C/text%3E%3C/svg%3E'">
                     <div class="product-info">
-                        <div class="product-name">${p.name}</div>
+                        <div class="product-name">${displayName}</div>
                         <div class="info-item">
                             <div class="info-label">Кол-во продаж</div>
                             <div class="info-value">${p.quantity}</div>
@@ -888,7 +997,7 @@ Twix	8	4400
                     </div>
                     <button class="info-button" onclick='showDetails(${JSON.stringify(p)})'>i</button>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         function showDetails(product) {
@@ -896,15 +1005,17 @@ Twix	8	4400
             const title = document.getElementById('modal-title');
             const body = document.getElementById('modal-body');
             
-            title.textContent = `Детализация себестоимости: ${product.name}`;
+            // Убираем "(SamBarista)" из названия
+            const displayName = product.name.replace(' (SamBarista)', '');
+            title.textContent = `Детализация себестоимости: ${displayName}`;
             
-            let html = '<div style="margin-bottom: 15px; padding: 15px; background: #FFF9F0; border-radius: 10px; border-left: 4px solid #8B6F47;">';
-            html += '<div style="font-size: 14px; color: #8B6F47; margin-bottom: 8px;">📊 Общая информация</div>';
-            html += `<div style="color: #6B4423;"><strong>Количество продаж:</strong> ${product.quantity} шт.</div>`;
-            html += `<div style="color: #6B4423;"><strong>Себестоимость единицы:</strong> ${product.cost.toLocaleString()} ₸</div>`;
+            let html = '<div style="margin-bottom: 15px; padding: 15px; background: #FAFAFA; border-radius: 10px; border-left: 4px solid #4A90E2;">';
+            html += '<div style="font-size: 14px; color: #4A90E2; margin-bottom: 8px;">📊 Общая информация</div>';
+            html += `<div style="color: #333;"><strong>Количество продаж:</strong> ${product.quantity} шт.</div>`;
+            html += `<div style="color: #333;"><strong>Себестоимость единицы:</strong> ${product.cost.toLocaleString()} ₸</div>`;
             html += '</div>';
             
-            html += '<div style="margin-bottom: 10px; font-size: 16px; font-weight: 600; color: #6B4423;">☕ Состав затрат на единицу товара:</div>';
+            html += '<div style="margin-bottom: 10px; font-size: 16px; font-weight: 600; color: #357ABD;">☕ Детализация затрат (общая за все продажи):</div>';
             
             let totalIngredientsCost = 0;
             
