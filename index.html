@@ -963,48 +963,23 @@ Twix	8	4400
             `;
         }
 
-const imageMap = {
-  "Choco-Pie": "1.png",
-  "Choco-Pie Dark": "2.png",
-  "Picnic": "3.png",
-  "Twix": "4.png",
-  "Американо 250ml (SamBarista)": "5.png",
-  "Горячий шоколад 250ml (SamBarista)": "6.png",
-  "Горячий шоколад 350ml (SamBarista)": "7.png",
-  "Какао 250ml (SamBarista)": "8.png",
-  "Какао 350ml (SamBarista)": "9.png",
-  "Капучино 250ml (SamBarista)": "10.png",
-  "Капучино 350ml (SamBarista)": "11.png",
-  "Кокосовый коктейль 250ml (SamBarista)": "12.png",
-  "Кокосовый коктейль 350ml (SamBarista)": "13.png",
-  "Кокосовый раф 250ml (SamBarista)": "14.png",
-  "Кокосовый раф 350ml (SamBarista)": "15.png",
-  "Кокосовый шоколад 250ml (SamBarista)": "16.png",
-  "Кокосовый шоколад 350ml (SamBarista)": "17.png",
-  "Латте 250ml (SamBarista)": "18.png",
-  "Латте 350ml (SamBarista)": "19.png",
-  "Моккачино 250ml (SamBarista)": "20.png",
-  "Моккачино 350ml (SamBarista)": "21.png",
-  "Таёжный чай 350ml (SamBarista)": "22.png",
-  "Флэт Уайт 250ml (SamBarista)": "23.png",
-  "Флэт Уайт 350ml (SamBarista)": "24.png"
-};
-
-		
         function displayProducts(products) {
             const container = document.getElementById('products-list');
             container.innerHTML = products.map(p => {
                 // Убираем "(SamBarista)" из названия для отображения
                 const displayName = p.name.replace(' (SamBarista)', '');
+                // Кодируем имя файла для корректной работы с кириллицей
+                const encodedFileName = encodeURIComponent(p.name + '.png');
                 
                 return `
+				
                 <div class="product-card">
-				<img 
-				  src="images/${imageMap[p.name] || 'no-image.png'}" 
-				  alt="${p.name}" 
-				  class="product-image"
-				  onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2216%22 fill=%22%23999%22%3EНет фото%3C/text%3E%3C/svg%3E'">
-					<div class="product-info">
+                    <img src="${encodedFileName}" alt="${displayName}" class="product-image" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2216%22 fill=%22%23999%22%3EНет фото%3C/text%3E%3C/svg%3E'">
+                    <div class="product-info">
+                        <div class="product-name">${displayName}</div>
+                <div class="product-card">
+                    <img src="${p.name}.png" alt="${displayName}" class="product-image" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2216%22 fill=%22%23999%22%3EНет фото%3C/text%3E%3C/svg%3E'">
+                    <div class="product-info">
                         <div class="product-name">${displayName}</div>
                         <div class="info-item">
                             <div class="info-label">Кол-во продаж</div>
