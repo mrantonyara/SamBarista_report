@@ -1,26 +1,26 @@
 29.09.2025-29.10.2025
-Choco-Pie	6	1500
-Choco-Pie Dark	3	750
-Picnic	4	1800
-Twix	9	4950
-Американо 250ml (SamBarista)	1	490
-Горячии шоколад 250ml (SamBarista)	17	10030
-Горячии шоколад 350ml (SamBarista)	27	18630
-Какао 250ml (SamBarista)	12	7080
-Какао 350ml (SamBarista)	6	4140
-Капучино 250ml (SamBarista)	14	8260
-Капучино 350ml (SamBarista)	27	18630
-Кокосовыи коктеиль 250ml (SamBarista)	2	1180
-Кокосовыи коктеиль 350ml (SamBarista)	5	3450
-Кокосовыи раф 250ml (SamBarista)	8	4720
-Кокосовыи раф 350ml (SamBarista)	46	31740
-Кокосовыи шоколад 250ml (SamBarista)	5	2950
-Кокосовыи шоколад 350ml (SamBarista)	6	4140
-Латте 250ml (SamBarista)	19	11210
-Латте 350ml (SamBarista)	10	6900
-Моккачино 250ml (SamBarista)	7	4130
-Моккачино 350ml (SamBarista)	10	6900
-Таежныи чаи 350ml (SamBarista)	3	1500
-Флэт Уаит 250ml (SamBarista)	4	2360
-Флэт Уаит 350ml (SamBarista)	18	12420
-	269	169860
+Choco-Pie	7	1750
+Choco-Pie Dark	4	1000
+Picnic	7	3150
+Twix	6	3300
+Американо 250ml (SamBarista)	3	1770
+Горячии шоколад 250ml (SamBarista)	2	1380
+Горячии шоколад 350ml (SamBarista)	8	6120
+Какао 250ml (SamBarista)	5	3450
+Какао 350ml (SamBarista)	2	1480
+Капучино 250ml (SamBarista)	15	10250
+Капучино 350ml (SamBarista)	17	13030
+Кокосовыи коктеиль 250ml (SamBarista)	1	590
+Кокосовыи коктеиль 350ml (SamBarista)	2	1580
+Кокосовыи раф 250ml (SamBarista)	8	5420
+Кокосовыи раф 350ml (SamBarista)	36	28140
+Кокосовыи шоколад 250ml (SamBarista)	4	3060
+Кокосовыи шоколад 350ml (SamBarista)	4	3060
+Латте 250ml (SamBarista)	11	7390
+Латте 350ml (SamBarista)	6	4740
+Моккачино 250ml (SamBarista)	6	4140
+Моккачино 350ml (SamBarista)	9	7110
+Таежныи чаи 350ml (SamBarista)	11	5500
+Флэт Уаит 250ml (SamBarista)	4	2660
+Флэт Уаит 350ml (SamBarista)	8	6220
+	186	125990
